@@ -1129,13 +1129,17 @@ async function exportPDF() {
     exportRoot.id = "pdf-export-root";
     exportRoot.style.cssText = [
       "position:fixed",
-      "left:-10000px",
+      "left:0",
       "top:0",
       "width:210mm",
       "background:#ffffff",
-      "z-index:-1",
+      "z-index:99999",
       "color:#111",
-      "font-family:Calibri,Arial,sans-serif"
+      "font-family:Calibri,Arial,sans-serif",
+      "pointer-events:none",
+      "visibility:visible",
+      "opacity:1",
+      "display:block"
     ].join(";");
 
     const exportStyle = document.createElement("style");
@@ -1170,6 +1174,14 @@ async function exportPDF() {
     exportRoot.appendChild(photoPages);
     document.body.appendChild(exportRoot);
 
+    // Pastikan salinan ekspor benar-benar memiliki ukuran sebelum dirender.
+    exportRoot.style.visibility = "visible";
+    exportRoot.style.opacity = "1";
+    const exportRect = exportRoot.getBoundingClientRect();
+    if (exportRect.width < 100 || exportRoot.scrollHeight < 100) {
+      throw new Error("Konten laporan tidak terbaca untuk proses ekspor PDF.");
+    }
+
     // Tunggu semua gambar pada salinan ekspor siap.
     const images = Array.from(exportRoot.querySelectorAll("img"));
     await Promise.all(images.map(waitForImage));
@@ -1177,8 +1189,12 @@ async function exportPDF() {
       typeof img.decode === "function" ? img.decode().catch(() => {}) : Promise.resolve()
     ));
 
-    // Beri browser satu frame untuk menghitung ulang tata letak salinan.
+    // Beri browser waktu menghitung ulang tata letak salinan.
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    if (!exportRoot.querySelector(".document-title")) {
+      throw new Error("Judul laporan tidak ditemukan pada salinan ekspor.");
+    }
 
     const options = {
       margin: 0,
@@ -1192,7 +1208,8 @@ async function exportPDF() {
         logging: false,
         scrollX: 0,
         scrollY: 0,
-        windowWidth: 794
+        windowWidth: Math.max(794, document.documentElement.clientWidth),
+        windowHeight: Math.max(document.documentElement.scrollHeight, 1123)
       },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait", compress: true },
       pagebreak: { mode: ["css", "legacy"], avoid: [".signature", ".photo-item"] }
