@@ -18,7 +18,7 @@ body {
 
 header {
   background: white;
-  padding: 16px 30px;
+  padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -47,12 +47,10 @@ button {
 
 main {
   display: grid;
-  grid-template-columns: 420px minmax(0, 1fr);
+  grid-template-columns: 410px minmax(0, 1fr);
   gap: 25px;
   padding: 25px;
 }
-
-h2 { margin-top: 0; }
 
 .card {
   background: white;
@@ -76,22 +74,21 @@ label {
   margin: 14px 0 6px;
 }
 
-input, textarea, select {
+input, textarea {
   width: 100%;
   padding: 11px;
   border: 1px solid #ccd7e7;
   border-radius: 8px;
   font-family: inherit;
   font-size: 13px;
-  color: #25364f;
 }
 
-textarea { min-height: 85px; resize: vertical; }
+textarea { min-height: 80px; resize: vertical; }
 
 .hint {
   font-size: 11px;
   color: #8391a8;
-  margin-top: 5px;
+  line-height: 1.5;
 }
 
 .preview-area {
@@ -101,116 +98,130 @@ textarea { min-height: 85px; resize: vertical; }
   overflow: auto;
 }
 
-.preview-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
 .page {
   background: white;
   width: 210mm;
   min-height: 297mm;
-  padding: 25mm 25mm 22mm;
+  padding: 18mm 25mm 20mm;
   margin: 0 auto 25px;
   color: #111;
-  font-family: "Times New Roman", serif;
-  font-size: 12pt;
-  line-height: 1.45;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11pt;
+  line-height: 1.4;
   box-shadow: 0 3px 15px #00000015;
+}
+
+.logo-area {
+  height: 34mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5mm;
+}
+
+.logo-area img {
+  max-height: 32mm;
+  max-width: 45mm;
+  object-fit: contain;
 }
 
 .document-title {
   text-align: center;
-  font-size: 14pt;
+  font-size: 12pt;
   font-weight: bold;
-  margin-bottom: 32px;
+  margin-bottom: 15mm;
 }
 
-.identity-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-  margin-bottom: 18px;
-}
-
-.identity-table td {
-  vertical-align: top;
-  padding: 2px 3px;
-}
-
-.identity-table td:first-child { width: 31px; }
-.identity-table td:nth-child(2) { width: 180px; }
-.identity-table td:nth-child(3) { width: 12px; }
-
-.section {
+.document-row {
   display: grid;
-  grid-template-columns: 220px 12px 1fr;
-  margin-bottom: 16px;
+  grid-template-columns: 7mm 70mm 5mm minmax(0, 1fr);
   align-items: start;
+  margin-bottom: 2px;
 }
 
-.section-label { font-weight: normal; }
-.section-content { white-space: pre-wrap; }
+.document-row .value {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-align: justify;
+}
+
+.identity {
+  margin-left: 7mm;
+}
+
+.identity .document-row {
+  grid-template-columns: 7mm 63mm 5mm minmax(0, 1fr);
+}
+
+.section-row {
+  margin-top: 4px;
+  margin-bottom: 3px;
+}
 
 .signature {
-  margin-top: 35px;
-  margin-left: 55%;
+  margin-top: 17mm;
+  margin-left: 0;
   line-height: 1.5;
+  break-inside: avoid;
 }
 
-.signature-space { height: 75px; }
+.signature img {
+  display: block;
+  width: 35mm;
+  max-height: 25mm;
+  object-fit: contain;
+  object-position: left center;
+  margin: 3mm 0;
+}
+
+.signature-space {
+  height: 20mm;
+}
 
 .page-two-title {
   text-align: center;
   font-weight: bold;
-  font-size: 14pt;
-  margin-bottom: 30px;
+  font-size: 12pt;
+  margin-bottom: 12mm;
 }
 
 .photo-grid {
   display: flex;
   flex-direction: column;
-  gap: 18px;
   align-items: center;
+  gap: 12mm;
 }
 
 .photo-grid img {
   max-width: 100%;
-  max-height: 190mm;
+  max-height: 225mm;
   object-fit: contain;
-}
-
-.placeholder {
-  color: #999;
-  text-align: center;
-  margin-top: 70px;
-  font-style: italic;
 }
 
 .upload-box {
   border: 2px dashed #cbd7e8;
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
-  text-align: center;
   background: #f7f9fc;
 }
 
-#photoInput { border: none; }
+.upload-box input { border: none; padding: 5px; }
 
-@media(max-width: 1000px) {
+@media(max-width: 1050px) {
   main { grid-template-columns: 1fr; }
 }
 
 @media print {
   @page {
-    size: A4;
+    size: A4 portrait;
     margin: 0;
   }
 
   body { background: white; }
-  header, .form-panel, .preview-heading { display: none !important; }
+
+  header, .form-panel, .preview-heading {
+    display: none !important;
+  }
 
   main {
     display: block;
@@ -225,12 +236,10 @@ textarea { min-height: 85px; resize: vertical; }
 
   .page {
     width: 210mm;
-    height: 297mm;
     min-height: 297mm;
     margin: 0;
-    padding: 25mm 25mm 22mm;
+    padding: 18mm 25mm 20mm;
     box-shadow: none;
-    overflow: hidden;
     break-after: page;
     page-break-after: always;
   }
@@ -263,50 +272,44 @@ textarea { min-height: 85px; resize: vertical; }
 
 <main>
 
-<!-- FORMULIR -->
 <section class="form-panel">
 
 <h2>Formulir Laporan CC</h2>
-<p>Lengkapi informasi Case Conference untuk membuat laporan.</p>
+<p>Lengkapi informasi untuk membuat laporan Case Conference.</p>
 
 <div class="card">
 <h3>01. Identitas PM</h3>
 
-<label>Nama</label>
+<label>Nama PM</label>
 <input id="name" placeholder="Nama lengkap PM">
 
 <label>Tempat, Tanggal Lahir</label>
-<input id="birth" placeholder="Contoh: Jakarta, 10 April 2006">
+<input id="birth" placeholder="Jakarta, 10 April 2006">
 
 <label>Alamat</label>
 <textarea id="address" placeholder="Alamat lengkap PM"></textarea>
 
 <label>Kasus</label>
-<input id="case" placeholder="Contoh: Anak Berhadapan dengan Hukum">
-
-<label>Status</label>
-<input id="status" placeholder="Contoh: Putusan">
+<input id="case" placeholder="Anak Berhadapan dengan Hukum">
 
 <label>Rujukan</label>
 <input id="referral" placeholder="Instansi yang merujuk">
 
 <label>Tanggal Masuk</label>
 <input id="entry" type="date">
-
 </div>
 
 <div class="card">
 <h3>02. Hasil Pembahasan</h3>
 
 <label>Pembahasan Hasil Asesmen</label>
-<textarea id="assessment" placeholder="Tuliskan hasil pembahasan asesmen PM"></textarea>
+<textarea id="assessment" placeholder="Tuliskan hasil pembahasan asesmen"></textarea>
 
 <label>Rencana Intervensi</label>
 <textarea id="intervention" placeholder="Tuliskan rencana intervensi"></textarea>
 
 <label>Rekomendasi Hasil Kesepakatan</label>
 <textarea id="recommendation" placeholder="Tuliskan rekomendasi hasil kesepakatan"></textarea>
-
 </div>
 
 <div class="card">
@@ -315,99 +318,165 @@ textarea { min-height: 85px; resize: vertical; }
 <label>Tempat Pembuatan Laporan</label>
 <input id="city" value="Jakarta">
 
-<label>Tanggal Pelaksanaan CC</label>
+<label>Tanggal CC</label>
 <input id="meetingDate" type="date">
 
-<label>Nama Petugas Pelaksana</label>
+<label>Nama Petugas</label>
 <input id="officer" placeholder="Nama lengkap petugas">
 
-<label>Gelar / Jabatan</label>
-<input id="title" placeholder="Contoh: M.Psi., Psikolog">
-
+<label>Gelar</label>
+<input id="title" placeholder="M.Psi., Psikolog">
 </div>
 
 <div class="card">
-<h3>04. Dokumentasi</h3>
-<p class="hint">Upload foto atau screenshot kegiatan CC. Bisa lebih dari satu foto.</p>
+<h3>04. Identitas Visual Dokumen</h3>
 
+<label>Logo Instansi</label>
 <div class="upload-box">
-<input type="file" id="photoInput" accept="image/*" multiple>
-<p class="hint">Format JPG, PNG, atau JPEG</p>
+<input type="file" id="logoInput" accept="image/*">
+</div>
+<p class="hint">Upload logo Kemensos yang akan tampil di tengah bagian atas dokumen.</p>
+
+<label>Tanda Tangan Digital</label>
+<div class="upload-box">
+<input type="file" id="signatureInput" accept="image/*">
+</div>
+<p class="hint">Upload gambar tanda tangan dengan latar belakang transparan atau putih.</p>
 </div>
 
+<div class="card">
+<h3>05. Dokumentasi</h3>
+
+<label>Upload Foto Kegiatan</label>
+<div class="upload-box">
+<input type="file" id="photoInput" accept="image/*" multiple>
+</div>
 <p id="photoCount" class="hint">Belum ada foto yang diunggah.</p>
 </div>
 
 </section>
 
-<!-- PREVIEW -->
 <section>
 
 <div class="preview-heading">
-<div>
 <h2>Pratinjau Dokumen</h2>
-<p>Format A4 | 2 bagian dokumen</p>
-</div>
+<p>Format A4 | Laporan dan Dokumentasi</p>
 </div>
 
 <div class="preview-area">
 
 <!-- HALAMAN 1 -->
+
 <div class="page">
+
+<div class="logo-area">
+<img id="p-logo" alt="" style="display:none">
+</div>
 
 <div class="document-title">
 LAPORAN HASIL CASE CONFERENCE
 </div>
 
-<div style="margin-bottom:5px;">
-1. Pembahasan Kasus PM atas nama
+<div class="document-row">
+<div>1.</div>
+<div>Pembahasan Kasus PM atas nama</div>
+<div></div>
+<div></div>
 </div>
 
-<table class="identity-table">
-<tr><td>a.</td><td>Nama</td><td>:</td><td id="p-name">........................</td></tr>
-<tr><td>b.</td><td>Tempat, Tanggal Lahir</td><td>:</td><td id="p-birth">........................</td></tr>
-<tr><td>c.</td><td>Alamat</td><td>:</td><td id="p-address">........................</td></tr>
-<tr><td>d.</td><td>Kasus</td><td>:</td><td id="p-case">........................</td></tr>
-<tr><td>e.</td><td>Status</td><td>:</td><td id="p-status">........................</td></tr>
-<tr><td>f.</td><td>Rujukan</td><td>:</td><td id="p-referral">........................</td></tr>
-<tr><td>g.</td><td>Tanggal Masuk</td><td>:</td><td id="p-entry">........................</td></tr>
-</table>
+<div class="identity">
 
-<div class="section">
-<div class="section-label">2. Pembahasan Hasil Asesmen</div>
+<div class="document-row">
+<div>a.</div>
+<div>Nama</div>
 <div>:</div>
-<div class="section-content" id="p-assessment">........................</div>
+<div class="value" id="p-name"></div>
 </div>
 
-<div class="section">
-<div class="section-label">3. Rencana Intervensi</div>
+<div class="document-row">
+<div>b.</div>
+<div>Tempat, Tanggal Lahir</div>
 <div>:</div>
-<div class="section-content" id="p-intervention">........................</div>
+<div class="value" id="p-birth"></div>
 </div>
 
-<div class="section">
-<div class="section-label">4. Rekomendasi Hasil Kesepakatan</div>
+<div class="document-row">
+<div>c.</div>
+<div>Alamat</div>
 <div>:</div>
-<div class="section-content" id="p-recommendation">........................</div>
+<div class="value" id="p-address"></div>
+</div>
+
+<div class="document-row">
+<div>d.</div>
+<div>Kasus</div>
+<div>:</div>
+<div class="value" id="p-case"></div>
+</div>
+
+<div class="document-row">
+<div>e.</div>
+<div>Rujukan</div>
+<div>:</div>
+<div class="value" id="p-referral"></div>
+</div>
+
+<div class="document-row">
+<div>f.</div>
+<div>Tanggal Masuk</div>
+<div>:</div>
+<div class="value" id="p-entry"></div>
+</div>
+
+</div>
+
+<div class="document-row section-row">
+<div>2.</div>
+<div>Pembahasan Hasil Asesmen</div>
+<div>:</div>
+<div class="value" id="p-assessment"></div>
+</div>
+
+<div class="document-row section-row">
+<div>3.</div>
+<div>Rencana Intervensi</div>
+<div>:</div>
+<div class="value" id="p-intervention"></div>
+</div>
+
+<div class="document-row section-row">
+<div>4.</div>
+<div>Rekomendasi Hasil Kesepakatan</div>
+<div>:</div>
+<div class="value" id="p-recommendation"></div>
 </div>
 
 <div class="signature">
-<div><span id="p-city">Jakarta</span>, <span id="p-meetingDate">........................</span></div>
+
+<div><span id="p-city">Jakarta</span>, <span id="p-meetingDate"></span></div>
 <div>Petugas Pelaksana,</div>
-<div class="signature-space"></div>
-<div><b id="p-officer">........................</b></div>
+
+<div class="signature-space" id="signatureSpace"></div>
+
+<img id="p-signature" alt="" style="display:none">
+
+<div><b id="p-officer"></b></div>
 <div id="p-title"></div>
+
 </div>
 
 </div>
 
 <!-- HALAMAN 2 -->
+
 <div class="page">
 
 <div class="page-two-title">DOKUMENTASI</div>
 
 <div class="photo-grid" id="photoPreview">
-<div class="placeholder">Dokumentasi akan muncul di sini setelah foto diunggah.</div>
+<p style="color:#999;text-align:center">
+Dokumentasi akan muncul setelah foto diunggah.
+</p>
 </div>
 
 </div>
@@ -418,16 +487,18 @@ LAPORAN HASIL CASE CONFERENCE
 </main>
 
 <script>
+
 const fields = [
-"name", "birth", "address", "case", "status",
+"name", "birth", "address", "case",
 "referral", "assessment", "intervention",
 "recommendation", "city", "officer", "title"
 ];
 
 function formatDate(value) {
-  if (!value) return "........................";
+  if (!value) return "";
 
   const parts = value.split("-");
+
   return new Date(
     Number(parts[0]),
     Number(parts[1])-1,
@@ -440,11 +511,10 @@ function formatDate(value) {
 }
 
 function updatePreview() {
-  fields.forEach(id => {
-    const input = document.getElementById(id);
-    const output = document.getElementById("p-" + id);
 
-    output.textContent = input.value.trim() || "........................";
+  fields.forEach(id => {
+    document.getElementById("p-" + id).textContent =
+      document.getElementById(id).value.trim();
   });
 
   document.getElementById("p-entry").textContent =
@@ -458,28 +528,59 @@ fields.concat(["entry", "meetingDate"]).forEach(id => {
   document.getElementById(id).addEventListener("input", updatePreview);
 });
 
-let photoURLs = [];
+function uploadImage(inputId, outputId) {
+
+  document.getElementById(inputId).addEventListener("change", function() {
+
+    const file = this.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Silakan pilih file gambar.");
+      this.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      const output = document.getElementById(outputId);
+      output.src = event.target.result;
+      output.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+uploadImage("logoInput", "p-logo");
+uploadImage("signatureInput", "p-signature");
+
+document.getElementById("signatureInput").addEventListener("change", function() {
+  document.getElementById("signatureSpace").style.height = "5mm";
+});
 
 document.getElementById("photoInput").addEventListener("change", function() {
+
   const files = Array.from(this.files);
-
-  photoURLs.forEach(url => URL.revokeObjectURL(url));
-  photoURLs = [];
-
   const preview = document.getElementById("photoPreview");
+
   preview.innerHTML = "";
 
   files.forEach(file => {
+
     if (!file.type.startsWith("image/")) return;
 
-    const url = URL.createObjectURL(file);
-    photoURLs.push(url);
+    const reader = new FileReader();
 
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = "Dokumentasi Case Conference";
+    reader.onload = function(event) {
+      const img = document.createElement("img");
+      img.src = event.target.result;
+      img.alt = "Dokumentasi Case Conference";
+      preview.appendChild(img);
+    };
 
-    preview.appendChild(img);
+    reader.readAsDataURL(file);
   });
 
   document.getElementById("photoCount").textContent =
@@ -487,19 +588,26 @@ document.getElementById("photoInput").addEventListener("change", function() {
 });
 
 function resetForm() {
-  if (!confirm("Yakin ingin menghapus seluruh isian?")) return;
 
-  document.querySelectorAll("input, textarea").forEach(input => {
-    if (input.id !== "city") input.value = "";
-  });
+  if (!confirm("Hapus seluruh isian formulir?")) return;
+
+  document.querySelectorAll(".form-panel input, .form-panel textarea")
+    .forEach(input => {
+      input.value = "";
+    });
 
   document.getElementById("city").value = "Jakarta";
 
-  photoURLs.forEach(url => URL.revokeObjectURL(url));
-  photoURLs = [];
+  ["p-logo", "p-signature"].forEach(id => {
+    const img = document.getElementById(id);
+    img.src = "";
+    img.style.display = "none";
+  });
+
+  document.getElementById("signatureSpace").style.height = "20mm";
 
   document.getElementById("photoPreview").innerHTML =
-    '<div class="placeholder">Dokumentasi akan muncul di sini setelah foto diunggah.</div>';
+    '<p style="color:#999;text-align:center">Dokumentasi akan muncul setelah foto diunggah.</p>';
 
   document.getElementById("photoCount").textContent =
     "Belum ada foto yang diunggah.";
@@ -508,6 +616,7 @@ function resetForm() {
 }
 
 updatePreview();
+
 </script>
 
 </body>
