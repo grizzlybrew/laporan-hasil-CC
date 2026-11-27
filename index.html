@@ -290,7 +290,6 @@ textarea {
 }
 
 /* PRINT PDF */
-
 @media print {
   @page {
     size: A4 portrait;
@@ -298,7 +297,8 @@ textarea {
   }
 
   body {
-    background: white;
+    background: #fff;
+    margin: 0;
   }
 
   header,
@@ -310,55 +310,57 @@ textarea {
   main {
     display: block;
     padding: 0;
+    margin: 0;
   }
 
   .preview-area {
     padding: 0;
-    background: white;
+    margin: 0;
+    background: #fff;
     overflow: visible;
+    border-radius: 0;
   }
 
-  /* Halaman laporan utama */
-  .preview-area > .page:first-child {
+  .page {
     width: 210mm;
+    min-height: 297mm;
     height: auto;
-    min-height: 297mm;
     margin: 0;
     padding: 18mm 25mm 20mm;
     box-shadow: none;
     overflow: visible;
-    break-inside: auto;
-    page-break-inside: auto;
-    break-after: page;
-    page-break-after: always;
+    background: #fff;
   }
 
-  /* Halaman dokumentasi */
-  #photoPages .page {
-    width: 210mm;
-    height: 297mm;
-    min-height: 297mm;
-    margin: 0;
-    padding: 18mm 25mm 20mm;
-    box-shadow: none;
-    overflow: hidden;
-    break-after: page;
-    page-break-after: always;
+  /* Laporan utama mengalir ke halaman berikutnya secara alami. */
+  .preview-area > .page:first-child {
+    break-after: auto;
+    page-break-after: auto;
   }
 
-  .document-row {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .signature {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
+  .document-row,
+  .signature,
   .photo-item {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  .document-row .value {
+    overflow-wrap: break-word;
+  }
+
+  /* Dokumentasi dimulai pada halaman baru, dua foto per halaman. */
+  #photoPages {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  #photoPages .page {
+    height: 297mm;
+    min-height: 297mm;
+    overflow: hidden;
+    break-after: page;
+    page-break-after: always;
   }
 
   #photoPages .page:last-child {
@@ -366,6 +368,58 @@ textarea {
     page-break-after: auto;
   }
 }
+
+/* Tampilan khusus saat membuat PDF langsung */
+.pdf-export-mode .preview-area {
+  width: 210mm;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  overflow: visible;
+  border-radius: 0;
+}
+
+.pdf-export-mode .page {
+  width: 210mm;
+  min-height: 297mm;
+  height: auto;
+  margin: 0;
+  padding: 18mm 25mm 20mm;
+  box-shadow: none;
+  background: #fff;
+  overflow: visible;
+}
+
+.pdf-export-mode .preview-area > .page:first-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.pdf-export-mode .document-row,
+.pdf-export-mode .signature,
+.pdf-export-mode .photo-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.pdf-export-mode #photoPages {
+  break-before: page;
+  page-break-before: always;
+}
+
+.pdf-export-mode #photoPages .page {
+  height: 297mm;
+  min-height: 297mm;
+  overflow: hidden;
+  break-after: page;
+  page-break-after: always;
+}
+
+.pdf-export-mode #photoPages .page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+</style>
 </head>
 
 <body>
@@ -490,10 +544,14 @@ Semua isian, tanda tangan, dan foto dokumentasi tersimpan otomatis di browser in
 
 <div class="logo-area">
   <img
-  src="./logo-kemensos.png"
-  alt="Logo Kementerian Sosial Republik Indonesia"
-  style="width:25mm;height:25mm;object-fit:contain;"
->
+    id="kemensosLogo"
+    src="https://grizzlybrew.github.io/laporan-hasil-CC/logo-kemensos.png"
+    alt="Logo Kementerian Sosial Republik Indonesia"
+    loading="eager"
+    crossorigin="anonymous"
+    style="width:25mm;height:25mm;object-fit:contain;"
+    onerror="this.onerror=null; this.src='./logo%20kemensos.svg';"
+  >
 </div>
 
 <div class="document-title">
@@ -607,7 +665,7 @@ Dokumentasi akan muncul setelah foto diunggah.
 </div>
 </section>
 </main>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js"></script>
 <script>
 
 /* ==================================
@@ -911,9 +969,7 @@ async function compressPhoto(file) {
     image.src = originalData;
   });
 }
-
-
-/* ==================================
+  /* ==================================
    5. UPLOAD TANDA TANGAN
 ================================== */
 
@@ -964,8 +1020,8 @@ function renderPhotos() {
     return;
   }
 
-  // Satu foto per halaman, mengikuti contoh PDF.
-  photoData.forEach(photo => {
+  // Dua foto per halaman dokumentasi.
+  for (let i = 0; i < photoData.length; i += 2) {
     const page = document.createElement("div");
     page.className = "page";
 
@@ -975,12 +1031,24 @@ function renderPhotos() {
         <div class="photo-item">
           <img alt="Dokumentasi Case Conference">
         </div>
+        ${
+          photoData[i + 1]
+            ? `<div class="photo-item"><img alt="Dokumentasi Case Conference"></div>`
+            : ""
+        }
       </div>
     `;
 
-    page.querySelector("img").src = photo;
+    const images = page.querySelectorAll("img");
+
+    images[0].src = photoData[i];
+
+    if (images[1] && photoData[i + 1]) {
+      images[1].src = photoData[i + 1];
+    }
+
     container.appendChild(page);
-  });
+  }
 }
 
 document.getElementById("photoInput")
@@ -1014,17 +1082,38 @@ document.getElementById("photoInput")
     alert("Ada foto yang gagal diproses. Silakan coba kembali.");
   }
 });
-  /* ==================================
-   7. EKSPOR PDF
+
+
+/* ==================================
+   7. EKSPOR PDF LANGSUNG
 ================================== */
+
+function waitForImage(img) {
+  return new Promise((resolve, reject) => {
+    if (img.complete && img.naturalWidth > 0) {
+      resolve();
+      return;
+    }
+
+    img.onload = () => resolve();
+    img.onerror = () => reject(
+      new Error("Gambar gagal dimuat: " + img.src)
+    );
+  });
+}
 
 async function exportPDF() {
   const button = document.querySelector(".export");
+  const originalText = button.textContent;
 
   button.disabled = true;
   button.textContent = "Membuat PDF...";
 
   try {
+    if (typeof html2pdf === "undefined") {
+      throw new Error("Library PDF belum berhasil dimuat.");
+    }
+
     clearTimeout(saveTimer);
 
     if (db) {
@@ -1033,51 +1122,75 @@ async function exportPDF() {
 
     updatePreview();
 
-    const element = document.querySelector(".preview-area");
+    const logo = document.getElementById("kemensosLogo");
+
+    // Pastikan logo utama tersedia sebelum ekspor.
+    if (logo && (!logo.complete || logo.naturalWidth === 0)) {
+      logo.src = "https://grizzlybrew.github.io/laporan-hasil-CC/logo-kemensos.png";
+
+      try {
+        await waitForImage(logo);
+      } catch (error) {
+        logo.src = "https://grizzlybrew.github.io/laporan-hasil-CC/logo%20kemensos.svg";
+        await waitForImage(logo);
+      }
+    }
+
+    const preview = document.querySelector(".preview-area");
+    const images = Array.from(preview.querySelectorAll("img"));
+
+    await Promise.all(images.map(waitForImage));
+
+    if (logo && logo.naturalWidth === 0) {
+      throw new Error("Logo Kemensos tidak berhasil dimuat.");
+    }
+
+    document.body.classList.add("pdf-export-mode");
+
+    // Tunggu browser menerapkan ukuran dan tata letak ekspor.
+    await new Promise(resolve => requestAnimationFrame(() => {
+      requestAnimationFrame(resolve);
+    }));
 
     const options = {
       margin: 0,
       filename: "Laporan_Hasil_Case_Conference.pdf",
-
       image: {
         type: "jpeg",
         quality: 0.98
       },
-
       html2canvas: {
         scale: 2,
         useCORS: true,
-        backgroundColor: "#ffffff"
+        backgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 794
       },
-
       jsPDF: {
         unit: "mm",
         format: "a4",
-        orientation: "portrait"
+        orientation: "portrait",
+        compress: true
       },
-
       pagebreak: {
-        mode: ["css", "legacy"]
+        mode: ["css", "legacy"],
+        avoid: [".document-row", ".signature", ".photo-item"]
       }
     };
 
-    await html2pdf()
-      .set(options)
-      .from(element)
-      .save();
+    await html2pdf().set(options).from(preview).save();
 
   } catch (error) {
     console.error(error);
-    alert("PDF gagal dibuat. Silakan coba kembali.");
-
+    alert("PDF gagal dibuat. Pastikan logo dan foto sudah tampil, lalu coba kembali.");
   } finally {
+    document.body.classList.remove("pdf-export-mode");
     button.disabled = false;
-    button.textContent = "↓ Ekspor PDF";
+    button.textContent = originalText;
   }
 }
-
-
-/* ==================================
+  /* ==================================
    8. RESET FORMULIR
 ================================== */
 
