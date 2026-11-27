@@ -1,3 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Case Conference Generator</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #edf1f7;
+  color: #183153;
+}
+
+/* HEADER */
+
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px #00000012;
+}
+
+.brand {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.brand small {
+  display: block;
+  font-size: 12px;
+  color: #71819b;
+  margin-top: 5px;
+  font-weight: normal;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  border: 0;
+  padding: 11px 17px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.export {
+  background: #173e78;
+  color: white;
+}
+
+.reset {
+  background: #fff0ef;
+  color: #bd4038;
+}
+
+/* DASHBOARD */
+
+main {
+  display: grid;
+  grid-template-columns: 410px minmax(0, 1fr);
+  gap: 25px;
+  padding: 25px;
+}
+
+.card {
+  background: white;
+  border-radius: 13px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px #1c315010;
+}
+
+.card h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #e3eaf3;
+  padding-bottom: 13px;
+  font-size: 16px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 14px 0 6px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #ccd7e7;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #25364f;
+}
+
+textarea {
+  min-height: 85px;
+  resize: vertical;
+}
+
+.hint {
+  font-size: 11px;
+  color: #8391a8;
+  line-height: 1.5;
+}
+
+.upload-box {
+  border: 2px dashed #cbd7e8;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f7f9fc;
+}
+
+.upload-box input {
+  border: none;
+  padding: 5px;
+}
+
+.save-status {
+  font-size: 11px;
+  color: #35805d;
+  margin-top: 12px;
+}
+
+/* PREVIEW */
+
+.preview-area {
+  background: #e4eaf3;
+  padding: 25px;
+  border-radius: 13px;
+  overflow: auto;
+}
+
+.preview-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* KERTAS A4 */
+
+.page {
+  background: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 18mm 25mm 20mm;
+  margin: 0 auto 25px;
+  color: #111;
+  font-family: Calibri, Arial, sans-serif;
+  font-size: 11pt;
+  line-height: 1.4;
+  box-shadow: 0 3px 15px #00000015;
+}
+
+/* LOGO KEMENSOS */
+
+.logo-area {
+  height: 30mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 7mm;
+}
+
+.logo-area img {
+  width: 25mm;
+  height: 25mm;
+  object-fit: contain;
+}
+
+/* JUDUL */
+
+.document-title {
+  text-align: center;
+  font-size: 12pt;
+  font-weight: bold;
+  margin-bottom: 15mm;
+  text-transform: uppercase;
+}
+
+/* ISI DOKUMEN */
+
+.document-row {
+  display: grid;
+  grid-template-columns: 7mm 70mm 5mm minmax(0, 1fr);
+  align-items: start;
+  margin-bottom: 3px;
+}
+
+.document-row > div:nth-child(2) {
+  font-weight: bold;
+}
+
+.document-row .value {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-align: justify;
+  font-weight: normal;
+}
+
+.identity {
+  margin-left: 7mm;
+}
+
+.identity .document-row {
+  grid-template-columns: 7mm 63mm 5mm minmax(0, 1fr);
+}
+
+.section-row {
+  margin-top: 7px;
+  margin-bottom: 5px;
+}
+
+/* TANGGAL DAN TANDA TANGAN */
+
+.signature {
+  margin-top: 17mm;
+  margin-left: 0;
+  width: 75mm;
+  line-height: 1.5;
+  break-inside: avoid;
+}
+
+.signature-date {
+  font-weight: normal;
+  margin-bottom: 2mm;
+}
+
+.signature img {
+  display: block;
+  width: 35mm;
+  max-height: 25mm;
+  object-fit: contain;
+  object-position: left center;
+  margin: 3mm 0;
+}
+
+.signature-space {
+  height: 20mm;
+}
+
+/* DOKUMENTASI */
+
+.page-two-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 12pt;
+  margin-bottom: 12mm;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12mm;
+  align-items: center;
+}
+
+.photo-item {
+  height: 190mm;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.photo-grid img {
+  max-width: 100%;
+  max-height: 180mm;
+  object-fit: contain;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 1050px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* PRINT PDF */
+
+@media print {
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  body {
+    background: white;
+  }
+
+  header,
+  .form-panel,
+  .preview-heading {
+    display: none !important;
+  }
+
+  main {
+    display: block;
+    padding: 0;
+  }
+
+  .preview-area {
+    padding: 0;
+    background: white;
+    overflow: visible;
+  }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    margin: 0;
+    padding: 18mm 25mm 20mm;
+    box-shadow: none;
+    overflow: hidden;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .photo-item {
+    break-inside: avoid;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="brand">
+    LAPORAN HASIL CASE CONFERENCE
+    <small>Sentra Handayani Jakarta | Document Generator</small>
+  </div>
+
+  <div class="header-actions">
+    <button class="export" onclick="exportPDF()">↓ Ekspor PDF</button>
+    <button class="reset" onclick="resetForm()">Reset Formulir</button>
+  </div>
+
+</header>
+
+<main>
+
+<!-- FORMULIR -->
+
+<section class="form-panel">
+
+<h2>Formulir Laporan CC</h2>
+
+<p>Lengkapi informasi Case Conference untuk membuat laporan.</p>
+
+<div class="card">
+
+<h3>01. Identitas PM</h3>
+
+<label>Nama PM</label>
+<input id="name" placeholder="Nama lengkap PM">
+
+<label>Tempat, Tanggal Lahir</label>
+<input id="birth" placeholder="Jakarta, 10 April 2006">
+
+<label>Alamat</label>
+<textarea id="address" placeholder="Alamat lengkap PM"></textarea>
+
+<label>Kasus</label>
+<input id="case" placeholder="Contoh: Anak Berhadapan dengan Hukum">
+
+<label>Rujukan</label>
+<input id="referral" placeholder="Instansi yang merujuk">
+
+<label>Tanggal Masuk</label>
+<input id="entry" type="date">
+
+</div>
+
+<div class="card">
+
+<h3>02. Pembahasan Hasil Asesmen</h3>
+
+<label>Hasil Asesmen</label>
+<textarea id="assessment" placeholder="Tuliskan hasil pembahasan asesmen PM"></textarea>
+
+</div>
+
+<div class="card">
+
+<h3>03. Rencana Intervensi</h3>
+
+<label>Rencana Intervensi</label>
+<textarea id="intervention" placeholder="Tuliskan rencana intervensi"></textarea>
+
+</div>
+
+<div class="card">
+
+<h3>04. Rekomendasi Hasil Kesepakatan</h3>
+
+<label>Rekomendasi</label>
+<textarea id="recommendation" placeholder="Tuliskan rekomendasi hasil kesepakatan"></textarea>
+
+</div>
+
+<div class="card">
+
+<h3>05. Tanda Tangan</h3>
+
+<label>Kota</label>
+<input id="city" value="Jakarta">
+
+<label>Tanggal Case Conference</label>
+<input id="meetingDate" type="date">
+
+<label>Nama Petugas Pelaksana</label>
+<input id="officer" placeholder="Nama lengkap dan gelar">
+
+<label>Unggah Tanda Tangan</label>
+<div class="upload-box">
+<input type="file" id="signatureInput" accept="image/*">
+</div>
+
+<p class="hint">Gunakan gambar tanda tangan dengan latar belakang transparan atau putih.</p>
+
+</div>
+
+<div class="card">
+
+<h3>06. Dokumentasi</h3>
+
+<label>Unggah Foto Dokumentasi</label>
+<div class="upload-box">
+<input type="file" id="photoInput" accept="image/*" multiple>
+</div>
+
+<p class="hint">Foto akan ditampilkan satu foto per halaman dokumentasi.</p>
+<p id="photoCount" class="hint">Belum ada foto yang diunggah.</p>
+
+</div>
+
+<p id="saveStatus" class="save-status">
+Data akan tersimpan otomatis saat kamu mengisi formulir.
+</p>
+
+</section>
+
+<!-- PREVIEW LAPORAN -->
+
+<section class="preview-area">
+
+<div class="preview-heading">
+  <h2>Pratinjau Laporan</h2>
+  <span>Ukuran A4</span>
+</div>
+
+<!-- HALAMAN 1: LAPORAN -->
+
+<div class="page">
+
+<div class="logo-area">
+  <img src="./logo-kemensos.svg" alt="Logo Kementerian Sosial Republik Indonesia">
+</div>
+
 <div class="document-title">
 LAPORAN HASIL CASE CONFERENCE
 </div>
@@ -41,20 +524,13 @@ LAPORAN HASIL CASE CONFERENCE
 
 <div class="document-row">
 <div>e.</div>
-<div>Status</div>
-<div>:</div>
-<div class="value" id="p-status"></div>
-</div>
-
-<div class="document-row">
-<div>f.</div>
 <div>Rujukan</div>
 <div>:</div>
 <div class="value" id="p-referral"></div>
 </div>
 
 <div class="document-row">
-<div>g.</div>
+<div>f.</div>
 <div>Tanggal Masuk</div>
 <div>:</div>
 <div class="value" id="p-entry"></div>
@@ -131,7 +607,7 @@ Dokumentasi akan muncul setelah foto diunggah.
 <script>
 
 /* ==================================
-   1. UPDATE PREVIEW DOKUMEN
+   1. PREVIEW DOKUMEN
 ================================== */
 
 const fields = [
@@ -139,7 +615,6 @@ const fields = [
   "birth",
   "address",
   "case",
-  "status",
   "referral",
   "entry",
   "assessment",
@@ -416,7 +891,7 @@ async function compressPhoto(file) {
     image.src = originalData;
   });
 }
-    /* ==================================
+   /* ==================================
    5. UPLOAD TANDA TANGAN
 ================================== */
 
@@ -465,7 +940,6 @@ function renderPhotos() {
     return;
   }
 
-  // Tetap mengikuti format awal: dua foto per halaman.
   for (let i = 0; i < photoData.length; i += 2) {
     const page = document.createElement("div");
     page.className = "page";
@@ -508,7 +982,6 @@ document.getElementById("photoInput")
       validFiles.map(file => compressPhoto(file))
     );
 
-    // Foto baru ditambahkan ke dokumentasi yang sudah ada.
     photoData = photoData.concat(newPhotos);
 
     document.getElementById("photoCount").textContent =
@@ -517,7 +990,6 @@ document.getElementById("photoInput")
     updatePreview();
     saveForm();
 
-    // Mengizinkan pengguna memilih file yang sama lagi jika diperlukan.
     this.value = "";
   } catch (error) {
     console.error(error);
@@ -537,7 +1009,6 @@ async function exportPDF() {
   button.textContent = "Menyiapkan PDF...";
 
   try {
-    // Pastikan perubahan terakhir selesai disimpan.
     clearTimeout(saveTimer);
 
     if (db) {
