@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Case Conference Generator</title>
 
 <style>
@@ -166,7 +165,7 @@ textarea {
   box-shadow: 0 3px 15px #00000015;
 }
 
-/* LOGO KEMENSOS */
+/* LOGO KEMENSOS PNG */
 
 .logo-area {
   height: 30mm;
@@ -293,7 +292,6 @@ textarea {
 /* PRINT PDF */
 
 @media print {
-
   @page {
     size: A4 portrait;
     margin: 0;
@@ -340,7 +338,6 @@ textarea {
   .photo-item {
     break-inside: avoid;
   }
-
 }
 </style>
 </head>
@@ -348,7 +345,6 @@ textarea {
 <body>
 
 <header>
-
   <div class="brand">
     LAPORAN HASIL CASE CONFERENCE
     <small>Sentra Handayani Jakarta | Document Generator</small>
@@ -358,21 +354,16 @@ textarea {
     <button class="export" onclick="exportPDF()">↓ Ekspor PDF</button>
     <button class="reset" onclick="resetForm()">Reset Formulir</button>
   </div>
-
 </header>
 
 <main>
 
-<!-- FORMULIR -->
-
 <section class="form-panel">
 
 <h2>Formulir Laporan CC</h2>
-
 <p>Lengkapi informasi Case Conference untuk membuat laporan.</p>
 
 <div class="card">
-
 <h3>01. Identitas PM</h3>
 
 <label>Nama PM</label>
@@ -392,93 +383,87 @@ textarea {
 
 <label>Tanggal Masuk</label>
 <input id="entry" type="date">
-
 </div>
 
 <div class="card">
+<h3>02. Hasil Pembahasan</h3>
 
-<h3>02. Pembahasan Hasil Asesmen</h3>
-
-<label>Hasil Asesmen</label>
-<textarea id="assessment" placeholder="Tuliskan hasil pembahasan asesmen PM"></textarea>
-
-</div>
-
-<div class="card">
-
-<h3>03. Rencana Intervensi</h3>
+<label>Pembahasan Hasil Asesmen</label>
+<textarea id="assessment" placeholder="Tuliskan hasil pembahasan asesmen"></textarea>
 
 <label>Rencana Intervensi</label>
 <textarea id="intervention" placeholder="Tuliskan rencana intervensi"></textarea>
 
-</div>
-
-<div class="card">
-
-<h3>04. Rekomendasi Hasil Kesepakatan</h3>
-
-<label>Rekomendasi</label>
+<label>Rekomendasi Hasil Kesepakatan</label>
 <textarea id="recommendation" placeholder="Tuliskan rekomendasi hasil kesepakatan"></textarea>
-
 </div>
 
 <div class="card">
+<h3>03. Petugas Pelaksana</h3>
 
-<h3>05. Tanda Tangan</h3>
-
-<label>Kota</label>
+<label>Tempat Pembuatan Laporan</label>
 <input id="city" value="Jakarta">
 
-<label>Tanggal Case Conference</label>
+<label>Tanggal CC</label>
 <input id="meetingDate" type="date">
 
-<label>Nama Petugas Pelaksana</label>
-<input id="officer" placeholder="Nama lengkap dan gelar">
+<label>Nama Petugas</label>
+<input id="officer" placeholder="Nama lengkap petugas">
+</div>
 
-<label>Unggah Tanda Tangan</label>
+<div class="card">
+<h3>04. Tanda Tangan Digital</h3>
+
+<label>Upload Tanda Tangan</label>
 <div class="upload-box">
 <input type="file" id="signatureInput" accept="image/*">
 </div>
 
-<p class="hint">Gunakan gambar tanda tangan dengan latar belakang transparan atau putih.</p>
-
+<p class="hint">
+Upload gambar tanda tangan. Disarankan menggunakan PNG dengan latar transparan.
+</p>
 </div>
 
 <div class="card">
+<h3>05. Dokumentasi</h3>
 
-<h3>06. Dokumentasi</h3>
-
-<label>Unggah Foto Dokumentasi</label>
+<label>Upload Foto Kegiatan</label>
 <div class="upload-box">
 <input type="file" id="photoInput" accept="image/*" multiple>
 </div>
 
-<p class="hint">Foto akan ditampilkan satu foto per halaman dokumentasi.</p>
-<p id="photoCount" class="hint">Belum ada foto yang diunggah.</p>
-
+<p id="photoCount" class="hint">
+Belum ada foto yang diunggah.
+</p>
 </div>
 
+<div class="card">
+<h3>Status Penyimpanan</h3>
 <p id="saveStatus" class="save-status">
 Data akan tersimpan otomatis saat kamu mengisi formulir.
 </p>
+<p class="hint">
+Semua isian, tanda tangan, dan foto dokumentasi tersimpan otomatis di browser ini.
+</p>
+</div>
 
 </section>
 
-<!-- PREVIEW LAPORAN -->
-
-<section class="preview-area">
+<section>
 
 <div class="preview-heading">
-  <h2>Pratinjau Laporan</h2>
-  <span>Ukuran A4</span>
+<div>
+<h2>Pratinjau Dokumen</h2>
+<p>Format A4 | Laporan dan Dokumentasi</p>
+</div>
 </div>
 
-<!-- HALAMAN 1: LAPORAN -->
+<div class="preview-area">
 
 <div class="page">
 
 <div class="logo-area">
-  <img src="./logo-kemensos.svg" alt="Logo Kementerian Sosial Republik Indonesia">
+  <img src="./logo-kemensos.png" alt="Logo Kementerian Sosial Republik Indonesia">
 </div>
 
 <div class="document-title">
@@ -578,32 +563,20 @@ LAPORAN HASIL CASE CONFERENCE
 
 </div>
 
-<!-- HALAMAN DOKUMENTASI DIBUAT OTOMATIS -->
-
 <div id="photoPages">
-
 <div class="page">
-
-<div class="page-two-title">
-DOKUMENTASI
-</div>
-
+<div class="page-two-title">DOKUMENTASI</div>
 <div class="photo-grid" id="photoPreview">
 <p style="color:#999;text-align:center">
 Dokumentasi akan muncul setelah foto diunggah.
 </p>
 </div>
-
+</div>
 </div>
 
 </div>
-
-</div>
-
 </section>
-
 </main>
-
 <script>
 
 /* ==================================
@@ -616,26 +589,32 @@ const fields = [
   "address",
   "case",
   "referral",
-  "entry",
   "assessment",
   "intervention",
   "recommendation",
   "city",
-  "meetingDate",
   "officer"
 ];
 
+const STORAGE_DB = "caseConferenceDatabase";
+const STORAGE_STORE = "reports";
+const STORAGE_ID = "currentReport";
+
+let db = null;
 let signatureData = "";
 let photoData = [];
-let db = null;
 let saveTimer = null;
 
-function formatDate(dateValue) {
-  if (!dateValue) return "";
+function formatDate(value) {
+  if (!value) return "";
 
-  const date = new Date(dateValue + "T00:00:00");
+  const parts = value.split("-");
 
-  return date.toLocaleDateString("id-ID", {
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1]) - 1,
+    Number(parts[2])
+  ).toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
     year: "numeric"
@@ -644,17 +623,19 @@ function formatDate(dateValue) {
 
 function updatePreview() {
   fields.forEach(id => {
+    const preview = document.getElementById("p-" + id);
     const input = document.getElementById(id);
-    const output = document.getElementById("p-" + id);
 
-    if (!input || !output) return;
-
-    if (id === "entry" || id === "meetingDate") {
-      output.textContent = formatDate(input.value);
-    } else {
-      output.textContent = input.value;
+    if (preview && input) {
+      preview.textContent = input.value.trim();
     }
   });
+
+  document.getElementById("p-entry").textContent =
+    formatDate(document.getElementById("entry").value);
+
+  document.getElementById("p-meetingDate").textContent =
+    formatDate(document.getElementById("meetingDate").value);
 
   const signature = document.getElementById("p-signature");
   const signatureSpace = document.getElementById("signatureSpace");
@@ -662,11 +643,11 @@ function updatePreview() {
   if (signatureData) {
     signature.src = signatureData;
     signature.style.display = "block";
-    signatureSpace.style.display = "none";
+    signatureSpace.style.height = "5mm";
   } else {
     signature.removeAttribute("src");
     signature.style.display = "none";
-    signatureSpace.style.display = "block";
+    signatureSpace.style.height = "20mm";
   }
 
   renderPhotos();
@@ -674,23 +655,20 @@ function updatePreview() {
 
 
 /* ==================================
-   2. DATABASE PENYIMPANAN BROWSER
+   2. PENYIMPANAN DATABASE
 ================================== */
-
-const DB_NAME = "CaseConferenceGenerator";
-const DB_VERSION = 1;
-const STORAGE_STORE = "reports";
-const STORAGE_ID = "currentReport";
 
 function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    const request = indexedDB.open(STORAGE_DB, 1);
 
     request.onupgradeneeded = function(event) {
       const database = event.target.result;
 
       if (!database.objectStoreNames.contains(STORAGE_STORE)) {
-        database.createObjectStore(STORAGE_STORE);
+        database.createObjectStore(STORAGE_STORE, {
+          keyPath: "id"
+        });
       }
     };
 
@@ -708,11 +686,16 @@ function openDatabase() {
 function saveToDatabase(data) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORAGE_STORE, "readwrite");
+    const store = transaction.objectStore(STORAGE_STORE);
 
-    transaction.objectStore(STORAGE_STORE).put(data, STORAGE_ID);
+    store.put({
+      id: STORAGE_ID,
+      data: data
+    });
 
     transaction.oncomplete = resolve;
     transaction.onerror = () => reject(transaction.error);
+    transaction.onabort = () => reject(transaction.error);
   });
 }
 
@@ -770,10 +753,12 @@ function saveForm() {
 
     try {
       await saveToDatabase(collectFormData());
+
       status.textContent =
         "✓ Semua data, tanda tangan, dan foto tersimpan otomatis.";
     } catch (error) {
       console.error(error);
+
       status.textContent =
         "Penyimpanan gagal. Ruang penyimpanan browser mungkin penuh.";
     }
@@ -807,13 +792,17 @@ async function loadForm() {
 
       document.getElementById("saveStatus").textContent =
         "✓ Data terakhir, tanda tangan, dan foto berhasil dipulihkan.";
+
     } else {
       updatePreview();
+
       document.getElementById("saveStatus").textContent =
         "Data akan tersimpan otomatis saat kamu mengisi formulir.";
     }
+
   } catch (error) {
     console.error(error);
+
     document.getElementById("saveStatus").textContent =
       "Data tersimpan tidak dapat dimuat. Coba buka kembali halaman.";
   }
@@ -891,7 +880,9 @@ async function compressPhoto(file) {
     image.src = originalData;
   });
 }
-   /* ==================================
+
+
+/* ==================================
    5. UPLOAD TANDA TANGAN
 ================================== */
 
@@ -909,8 +900,10 @@ document.getElementById("signatureInput")
 
   try {
     signatureData = await fileToDataURL(file);
+
     updatePreview();
     saveForm();
+
   } catch (error) {
     console.error(error);
     alert("Tanda tangan gagal dibaca. Silakan coba kembali.");
@@ -940,31 +933,23 @@ function renderPhotos() {
     return;
   }
 
-  for (let i = 0; i < photoData.length; i += 2) {
+  // Satu foto per halaman, mengikuti contoh PDF.
+  photoData.forEach(photo => {
     const page = document.createElement("div");
     page.className = "page";
 
     page.innerHTML = `
       <div class="page-two-title">DOKUMENTASI</div>
-      <div class="photo-grid"></div>
+      <div class="photo-grid">
+        <div class="photo-item">
+          <img alt="Dokumentasi Case Conference">
+        </div>
+      </div>
     `;
 
-    const grid = page.querySelector(".photo-grid");
-
-    photoData.slice(i, i + 2).forEach(photo => {
-      const item = document.createElement("div");
-      item.className = "photo-item";
-
-      const img = document.createElement("img");
-      img.src = photo;
-      img.alt = "Dokumentasi Case Conference";
-
-      item.appendChild(img);
-      grid.appendChild(item);
-    });
-
+    page.querySelector("img").src = photo;
     container.appendChild(page);
-  }
+  });
 }
 
 document.getElementById("photoInput")
@@ -982,6 +967,7 @@ document.getElementById("photoInput")
       validFiles.map(file => compressPhoto(file))
     );
 
+    // Foto baru ditambahkan ke dokumentasi yang sudah ada.
     photoData = photoData.concat(newPhotos);
 
     document.getElementById("photoCount").textContent =
@@ -991,14 +977,13 @@ document.getElementById("photoInput")
     saveForm();
 
     this.value = "";
+
   } catch (error) {
     console.error(error);
     alert("Ada foto yang gagal diproses. Silakan coba kembali.");
   }
 });
-
-
-/* ==================================
+  /* ==================================
    7. EKSPOR PDF
 ================================== */
 
@@ -1047,10 +1032,12 @@ async function exportPDF() {
 
   } catch (error) {
     console.error(error);
+
     alert(
       "Ada gambar yang belum berhasil dimuat. " +
       "Periksa koneksi internet atau unggah ulang gambar."
     );
+
   } finally {
     button.disabled = false;
     button.textContent = "↓ Ekspor PDF";
@@ -1097,6 +1084,7 @@ async function resetForm() {
 
     document.getElementById("saveStatus").textContent =
       "Formulir telah direset.";
+
   } catch (error) {
     console.error(error);
     alert("Data gagal dihapus dari penyimpanan browser.");
@@ -1112,8 +1100,10 @@ async function initialize() {
   try {
     await openDatabase();
     await loadForm();
+
   } catch (error) {
     console.error(error);
+
     document.getElementById("saveStatus").textContent =
       "Browser tidak dapat mengaktifkan penyimpanan otomatis.";
   }
