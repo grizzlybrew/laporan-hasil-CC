@@ -289,16 +289,20 @@ textarea {
   }
 }
 
-/* PRINT PDF */
+/* PRINT PDF: A4 NATURAL PAGINATION */
 @media print {
   @page {
     size: A4 portrait;
     margin: 0;
   }
 
-  body {
-    background: #fff;
-    margin: 0;
+  html, body {
+    width: 210mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   header,
@@ -308,116 +312,114 @@ textarea {
   }
 
   main {
-    display: block;
-    padding: 0;
-    margin: 0;
+    display: block !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  main > section {
+    display: block !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .preview-area {
-    padding: 0;
-    margin: 0;
-    background: #fff;
-    overflow: visible;
-    border-radius: 0;
+    display: block !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
   }
 
-  .page {
-    width: 210mm;
-    min-height: 297mm;
-    height: auto;
-    margin: 0;
-    padding: 18mm 25mm 20mm;
-    box-shadow: none;
-    overflow: visible;
-    background: #fff;
-  }
-
-  /* Laporan utama mengalir ke halaman berikutnya secara alami. */
+  /* Laporan utama tidak dikunci pada tinggi 297 mm.
+     Jika isinya panjang, browser melanjutkannya ke halaman berikutnya. */
   .preview-area > .page:first-child {
-    break-after: auto;
-    page-break-after: auto;
+    display: block !important;
+    width: 210mm !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 18mm 25mm 20mm !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    break-after: auto !important;
+    page-break-after: auto !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
   }
 
+  /* Jangan paksa paragraf panjang tetap utuh dalam satu halaman. */
   .document-row,
-  .signature,
-  .photo-item {
-    break-inside: avoid;
-    page-break-inside: avoid;
+  .identity,
+  .document-row .value {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
   }
 
   .document-row .value {
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
   }
 
-  /* Dokumentasi dimulai pada halaman baru, dua foto per halaman. */
+  .signature {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Dokumentasi dimulai pada halaman baru. Setiap halaman dokumentasi
+     tetap A4 dan memuat maksimal dua foto. */
   #photoPages {
-    break-before: page;
-    page-break-before: always;
+    display: block !important;
+    width: 210mm !important;
+    break-before: page !important;
+    page-break-before: always !important;
   }
 
   #photoPages .page {
-    height: 297mm;
-    min-height: 297mm;
-    overflow: hidden;
-    break-after: page;
-    page-break-after: always;
+    display: block !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 18mm 25mm 20mm !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    break-after: page !important;
+    page-break-after: always !important;
   }
 
   #photoPages .page:last-child {
-    break-after: auto;
-    page-break-after: auto;
+    break-after: auto !important;
+    page-break-after: auto !important;
   }
-}
 
-/* Tampilan khusus saat membuat PDF langsung */
-.pdf-export-mode .preview-area {
-  width: 210mm;
-  padding: 0;
-  margin: 0;
-  background: #fff;
-  overflow: visible;
-  border-radius: 0;
-}
+  #photoPages .photo-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: 8mm !important;
+    align-items: center !important;
+  }
 
-.pdf-export-mode .page {
-  width: 210mm;
-  min-height: 297mm;
-  height: auto;
-  margin: 0;
-  padding: 18mm 25mm 20mm;
-  box-shadow: none;
-  background: #fff;
-  overflow: visible;
-}
+  #photoPages .photo-item {
+    height: 82mm !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
 
-.pdf-export-mode .preview-area > .page:first-child {
-  break-after: auto;
-  page-break-after: auto;
-}
-
-.pdf-export-mode .document-row,
-.pdf-export-mode .signature,
-.pdf-export-mode .photo-item {
-  break-inside: avoid;
-  page-break-inside: avoid;
-}
-
-.pdf-export-mode #photoPages {
-  break-before: page;
-  page-break-before: always;
-}
-
-.pdf-export-mode #photoPages .page {
-  height: 297mm;
-  min-height: 297mm;
-  overflow: hidden;
-  break-after: page;
-  page-break-after: always;
-}
-
-.pdf-export-mode #photoPages .page:last-child {
-  break-after: auto;
-  page-break-after: auto;
+  #photoPages .photo-item img {
+    max-width: 100% !important;
+    max-height: 82mm !important;
+    object-fit: contain !important;
+  }
 }
 </style>
 </head>
@@ -969,7 +971,9 @@ async function compressPhoto(file) {
     image.src = originalData;
   });
 }
-  /* ==================================
+
+
+/* ==================================
    5. UPLOAD TANDA TANGAN
 ================================== */
 
@@ -1010,7 +1014,7 @@ function renderPhotos() {
     container.innerHTML = `
       <div class="page">
         <div class="page-two-title">DOKUMENTASI</div>
-        <div class="photo-grid" id="photoPreview">
+        <div class="photo-grid">
           <p style="color:#999;text-align:center">
             Dokumentasi akan muncul setelah foto diunggah.
           </p>
@@ -1025,28 +1029,29 @@ function renderPhotos() {
     const page = document.createElement("div");
     page.className = "page";
 
-    page.innerHTML = `
-      <div class="page-two-title">DOKUMENTASI</div>
-      <div class="photo-grid">
-        <div class="photo-item">
-          <img alt="Dokumentasi Case Conference">
-        </div>
-        ${
-          photoData[i + 1]
-            ? `<div class="photo-item"><img alt="Dokumentasi Case Conference"></div>`
-            : ""
-        }
-      </div>
-    `;
+    const title = document.createElement("div");
+    title.className = "page-two-title";
+    title.textContent = "DOKUMENTASI";
+    page.appendChild(title);
 
-    const images = page.querySelectorAll("img");
+    const grid = document.createElement("div");
+    grid.className = "photo-grid";
+    grid.style.gridTemplateRows = "1fr 1fr";
 
-    images[0].src = photoData[i];
+    photoData.slice(i, i + 2).forEach(photo => {
+      const item = document.createElement("div");
+      item.className = "photo-item";
+      item.style.height = "82mm";
 
-    if (images[1] && photoData[i + 1]) {
-      images[1].src = photoData[i + 1];
-    }
+      const img = document.createElement("img");
+      img.alt = "Dokumentasi Case Conference";
+      img.src = photo;
 
+      item.appendChild(img);
+      grid.appendChild(item);
+    });
+
+    page.appendChild(grid);
     container.appendChild(page);
   }
 }
@@ -1083,9 +1088,8 @@ document.getElementById("photoInput")
   }
 });
 
-
 /* ==================================
-   7. EKSPOR PDF LANGSUNG
+   7. EKSPOR PDF LANGSUNG KE LAPTOP
 ================================== */
 
 function waitForImage(img) {
@@ -1094,103 +1098,120 @@ function waitForImage(img) {
       resolve();
       return;
     }
-
     img.onload = () => resolve();
-    img.onerror = () => reject(
-      new Error("Gambar gagal dimuat: " + img.src)
-    );
+    img.onerror = () => reject(new Error("Gambar gagal dimuat: " + img.src));
   });
 }
 
 async function exportPDF() {
   const button = document.querySelector(".export");
   const originalText = button.textContent;
+  let exportRoot = null;
 
   button.disabled = true;
   button.textContent = "Membuat PDF...";
 
   try {
     if (typeof html2pdf === "undefined") {
-      throw new Error("Library PDF belum berhasil dimuat.");
+      throw new Error("Komponen ekspor PDF belum berhasil dimuat. Periksa koneksi internet.");
     }
 
     clearTimeout(saveTimer);
+    updatePreview();
 
     if (db) {
       await saveToDatabase(collectFormData());
     }
 
-    updatePreview();
+    // Buat salinan khusus ekspor dengan lebar tepat 210 mm.
+    // Ini mencegah area preview dashboard membuat sisi dokumen terpotong.
+    exportRoot = document.createElement("div");
+    exportRoot.id = "pdf-export-root";
+    exportRoot.style.cssText = [
+      "position:fixed",
+      "left:-10000px",
+      "top:0",
+      "width:210mm",
+      "background:#ffffff",
+      "z-index:-1",
+      "color:#111",
+      "font-family:Calibri,Arial,sans-serif"
+    ].join(";");
 
-    const logo = document.getElementById("kemensosLogo");
-
-    // Pastikan logo utama tersedia sebelum ekspor.
-    if (logo && (!logo.complete || logo.naturalWidth === 0)) {
-      logo.src = "https://grizzlybrew.github.io/laporan-hasil-CC/logo-kemensos.png";
-
-      try {
-        await waitForImage(logo);
-      } catch (error) {
-        logo.src = "https://grizzlybrew.github.io/laporan-hasil-CC/logo%20kemensos.svg";
-        await waitForImage(logo);
+    const exportStyle = document.createElement("style");
+    exportStyle.textContent = `
+      #pdf-export-root, #pdf-export-root * { box-sizing: border-box !important; }
+      #pdf-export-root .page {
+        width:210mm !important; max-width:210mm !important;
+        margin:0 !important; padding:18mm 25mm 20mm !important;
+        background:#fff !important; color:#111 !important;
+        box-shadow:none !important; overflow:visible !important;
+        font-family:Calibri,Arial,sans-serif !important; font-size:11pt !important;
+        line-height:1.4 !important;
       }
-    }
+      #pdf-export-root > .page { min-height:0 !important; height:auto !important; }
+      #pdf-export-root .logo-area { height:30mm !important; }
+      #pdf-export-root .logo-area img { width:25mm !important; height:25mm !important; object-fit:contain !important; }
+      #pdf-export-root .document-title, #pdf-export-root .page-two-title { font-weight:bold !important; }
+      #pdf-export-root .document-row { break-inside:auto; page-break-inside:auto; }
+      #pdf-export-root .signature, #pdf-export-root .photo-item { break-inside:avoid; page-break-inside:avoid; }
+      #pdf-export-root .document-row .value { white-space:pre-wrap; overflow-wrap:anywhere; text-align:justify; }
+      #pdf-export-root #photoPages { break-before:page; page-break-before:always; }
+      #pdf-export-root #photoPages .page { height:297mm !important; min-height:297mm !important; }
+      #pdf-export-root #photoPages .photo-grid { display:grid !important; grid-template-columns:1fr !important; grid-template-rows:1fr 1fr !important; gap:8mm !important; }
+      #pdf-export-root #photoPages .photo-item { height:82mm !important; display:flex !important; align-items:center !important; justify-content:center !important; }
+      #pdf-export-root #photoPages .photo-item img { max-width:100% !important; max-height:82mm !important; object-fit:contain !important; }
+    `;
+    exportRoot.appendChild(exportStyle);
 
-    const preview = document.querySelector(".preview-area");
-    const images = Array.from(preview.querySelectorAll("img"));
+    const reportPage = document.querySelector(".preview-area > .page").cloneNode(true);
+    const photoPages = document.getElementById("photoPages").cloneNode(true);
+    exportRoot.appendChild(reportPage);
+    exportRoot.appendChild(photoPages);
+    document.body.appendChild(exportRoot);
 
+    // Tunggu semua gambar pada salinan ekspor siap.
+    const images = Array.from(exportRoot.querySelectorAll("img"));
     await Promise.all(images.map(waitForImage));
+    await Promise.all(images.map(img =>
+      typeof img.decode === "function" ? img.decode().catch(() => {}) : Promise.resolve()
+    ));
 
-    if (logo && logo.naturalWidth === 0) {
-      throw new Error("Logo Kemensos tidak berhasil dimuat.");
-    }
-
-    document.body.classList.add("pdf-export-mode");
-
-    // Tunggu browser menerapkan ukuran dan tata letak ekspor.
-    await new Promise(resolve => requestAnimationFrame(() => {
-      requestAnimationFrame(resolve);
-    }));
+    // Beri browser satu frame untuk menghitung ulang tata letak salinan.
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
     const options = {
       margin: 0,
       filename: "Laporan_Hasil_Case_Conference.pdf",
-      image: {
-        type: "jpeg",
-        quality: 0.98
-      },
+      image: { type: "jpeg", quality: 0.98 },
       html2canvas: {
         scale: 2,
         useCORS: true,
+        allowTaint: false,
         backgroundColor: "#ffffff",
+        logging: false,
         scrollX: 0,
         scrollY: 0,
         windowWidth: 794
       },
-      jsPDF: {
-        unit: "mm",
-        format: "a4",
-        orientation: "portrait",
-        compress: true
-      },
-      pagebreak: {
-        mode: ["css", "legacy"],
-        avoid: [".document-row", ".signature", ".photo-item"]
-      }
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait", compress: true },
+      pagebreak: { mode: ["css", "legacy"], avoid: [".signature", ".photo-item"] }
     };
 
-    await html2pdf().set(options).from(preview).save();
+    // .save() mengunduh PDF langsung, tanpa membuka jendela Print.
+    await html2pdf().set(options).from(exportRoot).save();
 
   } catch (error) {
     console.error(error);
-    alert("PDF gagal dibuat. Pastikan logo dan foto sudah tampil, lalu coba kembali.");
+    alert("PDF belum berhasil dibuat. Pastikan koneksi internet aktif dan semua gambar/logo sudah tampil, lalu coba lagi.");
   } finally {
-    document.body.classList.remove("pdf-export-mode");
+    if (exportRoot && exportRoot.parentNode) exportRoot.remove();
     button.disabled = false;
     button.textContent = originalText;
   }
 }
-  /* ==================================
+
+/* ==================================
    8. RESET FORMULIR
 ================================== */
 
