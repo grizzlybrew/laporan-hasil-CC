@@ -318,7 +318,23 @@ textarea {
     overflow: visible;
   }
 
-  .page {
+  /* Halaman laporan utama */
+  .preview-area > .page:first-child {
+    width: 210mm;
+    height: auto;
+    min-height: 297mm;
+    margin: 0;
+    padding: 18mm 25mm 20mm;
+    box-shadow: none;
+    overflow: visible;
+    break-inside: auto;
+    page-break-inside: auto;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  /* Halaman dokumentasi */
+  #photoPages .page {
     width: 210mm;
     height: 297mm;
     min-height: 297mm;
@@ -330,16 +346,26 @@ textarea {
     page-break-after: always;
   }
 
-  .page:last-child {
-    break-after: auto;
-    page-break-after: auto;
+  .document-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .signature {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   .photo-item {
     break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #photoPages .page:last-child {
+    break-after: auto;
+    page-break-after: auto;
   }
 }
-</style>
 </head>
 
 <body>
@@ -581,6 +607,7 @@ Dokumentasi akan muncul setelah foto diunggah.
 </div>
 </section>
 </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js"></script>
 <script>
 
 /* ==================================
@@ -995,7 +1022,7 @@ async function exportPDF() {
   const button = document.querySelector(".export");
 
   button.disabled = true;
-  button.textContent = "Menyiapkan PDF...";
+  button.textContent = "Membuat PDF...";
 
   try {
     clearTimeout(saveTimer);
@@ -1006,41 +1033,42 @@ async function exportPDF() {
 
     updatePreview();
 
-    const images = Array.from(
-      document.querySelectorAll(".preview-area img")
-    );
+    const element = document.querySelector(".preview-area");
 
-    await Promise.all(
-      images.map(img => {
-        if (img.complete && img.naturalWidth > 0) {
-          return Promise.resolve();
-        }
+    const options = {
+      margin: 0,
+      filename: "Laporan_Hasil_Case_Conference.pdf",
 
-        return new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = () =>
-            reject(new Error("Ada gambar yang gagal dimuat."));
-        });
-      })
-    );
+      image: {
+        type: "jpeg",
+        quality: 0.98
+      },
 
-    await Promise.all(
-      images.map(img =>
-        typeof img.decode === "function"
-          ? img.decode().catch(() => {})
-          : Promise.resolve()
-      )
-    );
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff"
+      },
 
-    window.print();
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait"
+      },
+
+      pagebreak: {
+        mode: ["css", "legacy"]
+      }
+    };
+
+    await html2pdf()
+      .set(options)
+      .from(element)
+      .save();
 
   } catch (error) {
     console.error(error);
-
-    alert(
-      "Ada gambar yang belum berhasil dimuat. " +
-      "Periksa koneksi internet atau unggah ulang gambar."
-    );
+    alert("PDF gagal dibuat. Silakan coba kembali.");
 
   } finally {
     button.disabled = false;
