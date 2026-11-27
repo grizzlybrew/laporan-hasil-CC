@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Conference Generator</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #edf1f7;
+  color: #183153;
+}
+
+/* HEADER */
+
+header {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px #00000012;
+}
+
+.brand {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.brand small {
+  display: block;
+  font-size: 12px;
+  color: #71819b;
+  margin-top: 5px;
+  font-weight: normal;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  border: 0;
+  padding: 11px 17px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.export {
+  background: #173e78;
+  color: white;
+}
+
+.reset {
+  background: #fff0ef;
+  color: #bd4038;
+}
+
+/* DASHBOARD */
+
+main {
+  display: grid;
+  grid-template-columns: 410px minmax(0, 1fr);
+  gap: 25px;
+  padding: 25px;
+}
+
+.card {
+  background: white;
+  border-radius: 13px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px #1c315010;
+}
+
+.card h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #e3eaf3;
+  padding-bottom: 13px;
+  font-size: 16px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 14px 0 6px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #ccd7e7;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #25364f;
+}
+
+textarea {
+  min-height: 85px;
+  resize: vertical;
+}
+
+.hint {
+  font-size: 11px;
+  color: #8391a8;
+  line-height: 1.5;
+}
+
+.upload-box {
+  border: 2px dashed #cbd7e8;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f7f9fc;
+}
+
+.upload-box input {
+  border: none;
+  padding: 5px;
+}
+
+.save-status {
+  font-size: 11px;
+  color: #35805d;
+  margin-top: 12px;
+}
+
+/* PREVIEW */
+
+.preview-area {
+  background: #e4eaf3;
+  padding: 25px;
+  border-radius: 13px;
+  overflow: auto;
+}
+
+.preview-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* KERTAS A4 */
+
+.page {
+  background: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 18mm 25mm 20mm;
+  margin: 0 auto 25px;
+  color: #111;
+  font-family: Calibri, Arial, sans-serif;
+  font-size: 11pt;
+  line-height: 1.4;
+  box-shadow: 0 3px 15px #00000015;
+}
+
+/* LOGO KEMENSOS PNG */
+
+.logo-area {
+  height: 30mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 7mm;
+}
+
+.logo-area img {
+  width: 25mm;
+  height: 25mm;
+  object-fit: contain;
+}
+
+/* JUDUL */
+
+.document-title {
+  text-align: center;
+  font-size: 12pt;
+  font-weight: bold;
+  margin-bottom: 15mm;
+  text-transform: uppercase;
+}
+
+/* ISI DOKUMEN */
+
+.document-row {
+  display: grid;
+  grid-template-columns: 7mm 70mm 5mm minmax(0, 1fr);
+  align-items: start;
+  margin-bottom: 3px;
+}
+
+.document-row > div:nth-child(2) {
+  font-weight: bold;
+}
+
+.document-row .value {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-align: justify;
+  font-weight: normal;
+}
+
+.identity {
+  margin-left: 7mm;
+}
+
+.identity .document-row {
+  grid-template-columns: 7mm 63mm 5mm minmax(0, 1fr);
+}
+
+.section-row {
+  margin-top: 7px;
+  margin-bottom: 5px;
+}
+
+/* TANGGAL DAN TANDA TANGAN */
+
+.signature {
+  margin-top: 17mm;
+  margin-left: 0;
+  width: 75mm;
+  line-height: 1.5;
+  break-inside: avoid;
+}
+
+.signature-date {
+  font-weight: normal;
+  margin-bottom: 2mm;
+}
+
+.signature img {
+  display: block;
+  width: 35mm;
+  max-height: 25mm;
+  object-fit: contain;
+  object-position: left center;
+  margin: 3mm 0;
+}
+
+.signature-space {
+  height: 20mm;
+}
+
+/* DOKUMENTASI */
+
+.page-two-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 12pt;
+  margin-bottom: 12mm;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12mm;
+  align-items: center;
+}
+
+.photo-item {
+  height: 190mm;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.photo-grid img {
+  max-width: 100%;
+  max-height: 180mm;
+  object-fit: contain;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 1050px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* PRINT PDF */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  body {
+    background: #fff;
+    margin: 0;
+  }
+
+  header,
+  .form-panel,
+  .preview-heading {
+    display: none !important;
+  }
+
+  main {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  .preview-area {
+    padding: 0;
+    margin: 0;
+    background: #fff;
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    height: auto;
+    margin: 0;
+    padding: 18mm 25mm 20mm;
+    box-shadow: none;
+    overflow: visible;
+    background: #fff;
+  }
+
+  /* Laporan utama mengalir ke halaman berikutnya secara alami. */
+  .preview-area > .page:first-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .document-row,
+  .signature,
+  .photo-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .document-row .value {
+    overflow-wrap: break-word;
+  }
+
+  /* Dokumentasi dimulai pada halaman baru, dua foto per halaman. */
+  #photoPages {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  #photoPages .page {
+    height: 297mm;
+    min-height: 297mm;
+    overflow: hidden;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  #photoPages .page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
+
+/* Tampilan khusus saat membuat PDF langsung */
+.pdf-export-mode .preview-area {
+  width: 210mm;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  overflow: visible;
+  border-radius: 0;
+}
+
+.pdf-export-mode .page {
+  width: 210mm;
+  min-height: 297mm;
+  height: auto;
+  margin: 0;
+  padding: 18mm 25mm 20mm;
+  box-shadow: none;
+  background: #fff;
+  overflow: visible;
+}
+
+.pdf-export-mode .preview-area > .page:first-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.pdf-export-mode .document-row,
+.pdf-export-mode .signature,
+.pdf-export-mode .photo-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.pdf-export-mode #photoPages {
+  break-before: page;
+  page-break-before: always;
+}
+
+.pdf-export-mode #photoPages .page {
+  height: 297mm;
+  min-height: 297mm;
+  overflow: hidden;
+  break-after: page;
+  page-break-after: always;
+}
+
+.pdf-export-mode #photoPages .page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    LAPORAN HASIL CASE CONFERENCE
+    <small>Sentra Handayani Jakarta | Document Generator</small>
+  </div>
+
+  <div class="header-actions">
+    <button class="export" onclick="exportPDF()">↓ Ekspor PDF</button>
+    <button class="reset" onclick="resetForm()">Reset Formulir</button>
+  </div>
+</header>
+
+<main>
+
+<section class="form-panel">
+
+<h2>Formulir Laporan CC</h2>
+<p>Lengkapi informasi Case Conference untuk membuat laporan.</p>
+
+<div class="card">
+<h3>01. Identitas PM</h3>
+
+<label>Nama PM</label>
+<input id="name" placeholder="Nama lengkap PM">
+
+<label>Tempat, Tanggal Lahir</label>
+<input id="birth" placeholder="Jakarta, 10 April 2006">
+
+<label>Alamat</label>
+<textarea id="address" placeholder="Alamat lengkap PM"></textarea>
+
+<label>Kasus</label>
+<input id="case" placeholder="Contoh: Anak Berhadapan dengan Hukum">
+
+<label>Rujukan</label>
+<input id="referral" placeholder="Instansi yang merujuk">
+
+<label>Tanggal Masuk</label>
+<input id="entry" type="date">
+</div>
+
+<div class="card">
+<h3>02. Hasil Pembahasan</h3>
+
+<label>Pembahasan Hasil Asesmen</label>
+<textarea id="assessment" placeholder="Tuliskan hasil pembahasan asesmen"></textarea>
+
+<label>Rencana Intervensi</label>
+<textarea id="intervention" placeholder="Tuliskan rencana intervensi"></textarea>
+
+<label>Rekomendasi Hasil Kesepakatan</label>
+<textarea id="recommendation" placeholder="Tuliskan rekomendasi hasil kesepakatan"></textarea>
+</div>
+
+<div class="card">
+<h3>03. Petugas Pelaksana</h3>
+
+<label>Tempat Pembuatan Laporan</label>
+<input id="city" value="Jakarta">
+
+<label>Tanggal CC</label>
+<input id="meetingDate" type="date">
+
+<label>Nama Petugas</label>
+<input id="officer" placeholder="Nama lengkap petugas">
+</div>
+
+<div class="card">
+<h3>04. Tanda Tangan Digital</h3>
+
+<label>Upload Tanda Tangan</label>
+<div class="upload-box">
+<input type="file" id="signatureInput" accept="image/*">
+</div>
+
+<p class="hint">
+Upload gambar tanda tangan. Disarankan menggunakan PNG dengan latar transparan.
+</p>
+</div>
+
+<div class="card">
+<h3>05. Dokumentasi</h3>
+
+<label>Upload Foto Kegiatan</label>
+<div class="upload-box">
+<input type="file" id="photoInput" accept="image/*" multiple>
+</div>
+
+<p id="photoCount" class="hint">
+Belum ada foto yang diunggah.
+</p>
+</div>
+
+<div class="card">
+<h3>Status Penyimpanan</h3>
+<p id="saveStatus" class="save-status">
+Data akan tersimpan otomatis saat kamu mengisi formulir.
+</p>
+<p class="hint">
+Semua isian, tanda tangan, dan foto dokumentasi tersimpan otomatis di browser ini.
+</p>
+</div>
+
+</section>
+
+<section>
+
+<div class="preview-heading">
+<div>
+<h2>Pratinjau Dokumen</h2>
+<p>Format A4 | Laporan dan Dokumentasi</p>
+</div>
+</div>
+
+<div class="preview-area">
+
+<div class="page">
+
+<div class="logo-area">
+  <img
+  src="./logo-kemensos.png"
+  alt="Logo Kementerian Sosial Republik Indonesia"
+  loading="eager"
+  style="width:25mm;height:25mm;object-fit:contain;"
+>
+</div>
+
+<div class="document-title">
+LAPORAN HASIL CASE CONFERENCE
+</div>
+
+<div class="document-row">
+<div>1.</div>
+<div>Pembahasan Kasus PM atas nama</div>
+<div></div>
+<div></div>
+</div>
+
+<div class="identity">
+
+<div class="document-row">
+<div>a.</div>
+<div>Nama</div>
+<div>:</div>
+<div class="value" id="p-name"></div>
+</div>
+
+<div class="document-row">
+<div>b.</div>
+<div>Tempat, Tanggal Lahir</div>
+<div>:</div>
+<div class="value" id="p-birth"></div>
+</div>
+
+<div class="document-row">
+<div>c.</div>
+<div>Alamat</div>
+<div>:</div>
+<div class="value" id="p-address"></div>
+</div>
+
+<div class="document-row">
+<div>d.</div>
+<div>Kasus</div>
+<div>:</div>
+<div class="value" id="p-case"></div>
+</div>
+
+<div class="document-row">
+<div>e.</div>
+<div>Rujukan</div>
+<div>:</div>
+<div class="value" id="p-referral"></div>
+</div>
+
+<div class="document-row">
+<div>f.</div>
+<div>Tanggal Masuk</div>
+<div>:</div>
+<div class="value" id="p-entry"></div>
+</div>
+
+</div>
+
+<div class="document-row section-row">
+<div>2.</div>
+<div>Pembahasan Hasil Asesmen</div>
+<div>:</div>
+<div class="value" id="p-assessment"></div>
+</div>
+
+<div class="document-row section-row">
+<div>3.</div>
+<div>Rencana Intervensi</div>
+<div>:</div>
+<div class="value" id="p-intervention"></div>
+</div>
+
+<div class="document-row section-row">
+<div>4.</div>
+<div>Rekomendasi Hasil Kesepakatan</div>
+<div>:</div>
+<div class="value" id="p-recommendation"></div>
+</div>
+
+<div class="signature">
+
+<div class="signature-date">
+<span id="p-city">Jakarta</span>,
+<span id="p-meetingDate"></span>
+</div>
+
+<div>Petugas Pelaksana,</div>
+
+<div class="signature-space" id="signatureSpace"></div>
+
+<img id="p-signature" alt="" style="display:none">
+
+<div><b id="p-officer"></b></div>
+
+</div>
+
+</div>
+
+<div id="photoPages">
+<div class="page">
+<div class="page-two-title">DOKUMENTASI</div>
+<div class="photo-grid" id="photoPreview">
+<p style="color:#999;text-align:center">
+Dokumentasi akan muncul setelah foto diunggah.
+</p>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+</main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js"></script>
+<script>
+
+/* ==================================
+   1. PREVIEW DOKUMEN
+================================== */
+
+const fields = [
+  "name",
+  "birth",
+  "address",
+  "case",
+  "referral",
+  "assessment",
+  "intervention",
+  "recommendation",
+  "city",
+  "officer"
+];
+
+const STORAGE_DB = "caseConferenceDatabase";
+const STORAGE_STORE = "reports";
+const STORAGE_ID = "currentReport";
+
+let db = null;
+let signatureData = "";
+let photoData = [];
+let saveTimer = null;
+
+function formatDate(value) {
+  if (!value) return "";
+
+  const parts = value.split("-");
+
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1]) - 1,
+    Number(parts[2])
+  ).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+}
+
+function updatePreview() {
+  fields.forEach(id => {
+    const preview = document.getElementById("p-" + id);
+    const input = document.getElementById(id);
+
+    if (preview && input) {
+      preview.textContent = input.value.trim();
+    }
+  });
+
+  document.getElementById("p-entry").textContent =
+    formatDate(document.getElementById("entry").value);
+
+  document.getElementById("p-meetingDate").textContent =
+    formatDate(document.getElementById("meetingDate").value);
+
+  const signature = document.getElementById("p-signature");
+  const signatureSpace = document.getElementById("signatureSpace");
+
+  if (signatureData) {
+    signature.src = signatureData;
+    signature.style.display = "block";
+    signatureSpace.style.height = "5mm";
+  } else {
+    signature.removeAttribute("src");
+    signature.style.display = "none";
+    signatureSpace.style.height = "20mm";
+  }
+
+  renderPhotos();
+}
+
+
+/* ==================================
+   2. PENYIMPANAN DATABASE
+================================== */
+
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(STORAGE_DB, 1);
+
+    request.onupgradeneeded = function(event) {
+      const database = event.target.result;
+
+      if (!database.objectStoreNames.contains(STORAGE_STORE)) {
+        database.createObjectStore(STORAGE_STORE, {
+          keyPath: "id"
+        });
+      }
+    };
+
+    request.onsuccess = function(event) {
+      db = event.target.result;
+      resolve(db);
+    };
+
+    request.onerror = function() {
+      reject(request.error);
+    };
+  });
+}
+
+function saveToDatabase(data) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORAGE_STORE, "readwrite");
+    const store = transaction.objectStore(STORAGE_STORE);
+
+    store.put({
+      id: STORAGE_ID,
+      data: data
+    });
+
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error);
+    transaction.onabort = () => reject(transaction.error);
+  });
+}
+
+function readFromDatabase() {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORAGE_STORE, "readonly");
+    const request = transaction.objectStore(STORAGE_STORE).get(STORAGE_ID);
+
+    request.onsuccess = () => {
+      resolve(request.result ? request.result.data : null);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function deleteFromDatabase() {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORAGE_STORE, "readwrite");
+    transaction.objectStore(STORAGE_STORE).delete(STORAGE_ID);
+
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+function collectFormData() {
+  const data = {};
+
+  const formInputs = document.querySelectorAll(
+    ".form-panel input:not([type=file]), .form-panel textarea"
+  );
+
+  formInputs.forEach(input => {
+    data[input.id] = input.value;
+  });
+
+  data.signature = signatureData;
+  data.photos = photoData;
+
+  return data;
+}
+
+function saveForm() {
+  clearTimeout(saveTimer);
+
+  const status = document.getElementById("saveStatus");
+  status.textContent = "Menyimpan perubahan...";
+
+  saveTimer = setTimeout(async () => {
+    if (!db) {
+      status.textContent = "Penyimpanan otomatis belum tersedia.";
+      return;
+    }
+
+    try {
+      await saveToDatabase(collectFormData());
+
+      status.textContent =
+        "✓ Semua data, tanda tangan, dan foto tersimpan otomatis.";
+    } catch (error) {
+      console.error(error);
+
+      status.textContent =
+        "Penyimpanan gagal. Ruang penyimpanan browser mungkin penuh.";
+    }
+  }, 500);
+}
+
+async function loadForm() {
+  try {
+    const data = await readFromDatabase();
+
+    if (data) {
+      const formInputs = document.querySelectorAll(
+        ".form-panel input:not([type=file]), .form-panel textarea"
+      );
+
+      formInputs.forEach(input => {
+        if (Object.prototype.hasOwnProperty.call(data, input.id)) {
+          input.value = data[input.id];
+        }
+      });
+
+      signatureData = data.signature || "";
+      photoData = Array.isArray(data.photos) ? data.photos : [];
+
+      document.getElementById("photoCount").textContent =
+        photoData.length
+          ? photoData.length + " foto tersimpan."
+          : "Belum ada foto yang diunggah.";
+
+      updatePreview();
+
+      document.getElementById("saveStatus").textContent =
+        "✓ Data terakhir, tanda tangan, dan foto berhasil dipulihkan.";
+
+    } else {
+      updatePreview();
+
+      document.getElementById("saveStatus").textContent =
+        "Data akan tersimpan otomatis saat kamu mengisi formulir.";
+    }
+
+  } catch (error) {
+    console.error(error);
+
+    document.getElementById("saveStatus").textContent =
+      "Data tersimpan tidak dapat dimuat. Coba buka kembali halaman.";
+  }
+}
+
+
+/* ==================================
+   3. AUTOSAVE SEMUA ISIAN
+================================== */
+
+const formInputs = document.querySelectorAll(
+  ".form-panel input:not([type=file]), .form-panel textarea"
+);
+
+formInputs.forEach(input => {
+  input.addEventListener("input", function() {
+    updatePreview();
+    saveForm();
+  });
+
+  input.addEventListener("change", function() {
+    updatePreview();
+    saveForm();
+  });
+});
+
+
+/* ==================================
+   4. FILE KE DATA URL
+================================== */
+
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+
+    reader.readAsDataURL(file);
+  });
+}
+
+async function compressPhoto(file) {
+  const originalData = await fileToDataURL(file);
+
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = function() {
+      const maxDimension = 1600;
+      let width = image.width;
+      let height = image.height;
+
+      if (width > maxDimension || height > maxDimension) {
+        const ratio = Math.min(
+          maxDimension / width,
+          maxDimension / height
+        );
+
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, width, height);
+
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+
+    image.onerror = reject;
+    image.src = originalData;
+  });
+}
+
+
+/* ==================================
+   5. UPLOAD TANDA TANGAN
+================================== */
+
+document.getElementById("signatureInput")
+.addEventListener("change", async function() {
+  const file = this.files[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    alert("Silakan pilih file gambar.");
+    this.value = "";
+    return;
+  }
+
+  try {
+    signatureData = await fileToDataURL(file);
+
+    updatePreview();
+    saveForm();
+
+  } catch (error) {
+    console.error(error);
+    alert("Tanda tangan gagal dibaca. Silakan coba kembali.");
+  }
+});
+
+
+/* ==================================
+   6. UPLOAD DAN PREVIEW DOKUMENTASI
+================================== */
+
+function renderPhotos() {
+  const container = document.getElementById("photoPages");
+  container.innerHTML = "";
+
+  if (!photoData.length) {
+    container.innerHTML = `
+      <div class="page">
+        <div class="page-two-title">DOKUMENTASI</div>
+        <div class="photo-grid">
+          <p style="color:#999;text-align:center">
+            Dokumentasi akan muncul setelah foto diunggah.
+          </p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Dua foto per halaman dokumentasi.
+  for (let i = 0; i < photoData.length; i += 2) {
+    const page = document.createElement("div");
+    page.className = "page";
+
+    const title = document.createElement("div");
+    title.className = "page-two-title";
+    title.textContent = "DOKUMENTASI";
+    page.appendChild(title);
+
+    const grid = document.createElement("div");
+    grid.className = "photo-grid";
+    grid.style.gridTemplateRows = "1fr 1fr";
+
+    photoData.slice(i, i + 2).forEach(photo => {
+      const item = document.createElement("div");
+      item.className = "photo-item";
+      item.style.height = "82mm";
+
+      const img = document.createElement("img");
+      img.alt = "Dokumentasi Case Conference";
+      img.src = photo;
+
+      item.appendChild(img);
+      grid.appendChild(item);
+    });
+
+    page.appendChild(grid);
+    container.appendChild(page);
+  }
+}
+
+document.getElementById("photoInput")
+.addEventListener("change", async function() {
+  const files = Array.from(this.files || []);
+  const validFiles = files.filter(file => file.type.startsWith("image/"));
+
+  if (!validFiles.length) return;
+
+  try {
+    document.getElementById("photoCount").textContent =
+      "Memproses " + validFiles.length + " foto...";
+
+    const newPhotos = await Promise.all(
+      validFiles.map(file => compressPhoto(file))
+    );
+
+    // Foto baru ditambahkan ke dokumentasi yang sudah ada.
+    photoData = photoData.concat(newPhotos);
+
+    document.getElementById("photoCount").textContent =
+      photoData.length + " foto tersimpan.";
+
+    updatePreview();
+    saveForm();
+
+    this.value = "";
+
+  } catch (error) {
+    console.error(error);
+    alert("Ada foto yang gagal diproses. Silakan coba kembali.");
+  }
+});
+
+/* ==================================
+   7. EKSPOR PDF
+================================== */
+
+async function exportPDF() {
+  const button = document.querySelector(".export");
+  const originalText = button.textContent;
+
+  if (typeof html2pdf === "undefined") {
+    alert("Fitur ekspor PDF belum berhasil dimuat. Periksa koneksi internet lalu muat ulang halaman.");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Membuat PDF...";
+
+  try {
+    clearTimeout(saveTimer);
+
+    if (db) {
+      await saveToDatabase(collectFormData());
+    }
+
+    updatePreview();
+
+    const preview = document.querySelector(".preview-area");
+    const images = Array.from(preview.querySelectorAll("img"));
+
+    await Promise.all(images.map(img => {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = () => reject(new Error("Gambar gagal dimuat: " + (img.src || "gambar")));
+      });
+    }));
+
+    await Promise.all(images.map(img => {
+      if (typeof img.decode === "function") return img.decode().catch(() => {});
+      return Promise.resolve();
+    }));
+
+    document.body.classList.add("pdf-export-mode");
+
+    // Beri browser waktu menerapkan ukuran dan tata letak khusus PDF.
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    const options = {
+      margin: 0,
+      filename: "Laporan_Hasil_Case_Conference.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 794
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+        compress: true
+      },
+      pagebreak: {
+        mode: ["css", "legacy"],
+        avoid: [".document-row", ".signature", ".photo-item"]
+      }
+    };
+
+    await html2pdf().set(options).from(preview).save();
+
+  } catch (error) {
+    console.error(error);
+    alert("PDF gagal dibuat. Pastikan logo dan foto sudah tampil, lalu coba kembali.");
+  } finally {
+    document.body.classList.remove("pdf-export-mode");
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+/* ==================================
+   8. RESET FORMULIR
+================================== */
+
+async function resetForm() {
+  if (!confirm(
+    "Yakin ingin menghapus seluruh isian, tanda tangan, dan foto dokumentasi?"
+  )) return;
+
+  clearTimeout(saveTimer);
+
+  const formInputs = document.querySelectorAll(
+    ".form-panel input:not([type=file]), .form-panel textarea"
+  );
+
+  formInputs.forEach(input => {
+    input.value = "";
+  });
+
+  document.getElementById("city").value = "Jakarta";
+
+  document.getElementById("signatureInput").value = "";
+  document.getElementById("photoInput").value = "";
+
+  signatureData = "";
+  photoData = [];
+
+  document.getElementById("photoCount").textContent =
+    "Belum ada foto yang diunggah.";
+
+  try {
+    if (db) {
+      await deleteFromDatabase();
+    }
+
+    updatePreview();
+
+    document.getElementById("saveStatus").textContent =
+      "Formulir telah direset.";
+
+  } catch (error) {
+    console.error(error);
+    alert("Data gagal dihapus dari penyimpanan browser.");
+  }
+}
+
+
+/* ==================================
+   9. INISIALISASI
+================================== */
+
+async function initialize() {
+  try {
+    await openDatabase();
+    await loadForm();
+
+  } catch (error) {
+    console.error(error);
+
+    document.getElementById("saveStatus").textContent =
+      "Browser tidak dapat mengaktifkan penyimpanan otomatis.";
+  }
+}
+
+initialize();
+
+</script>
+
+</body>
+</html>
