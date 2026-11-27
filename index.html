@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Conference Generator</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #edf1f7;
+  color: #183153;
+}
+
+header {
+  background: white;
+  padding: 16px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px #00000012;
+}
+
+.brand { font-size: 19px; font-weight: bold; }
+.brand small {
+  display: block;
+  font-size: 12px;
+  color: #71819b;
+  margin-top: 5px;
+  font-weight: normal;
+}
+
+button {
+  border: 0;
+  padding: 11px 17px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.export { background: #173e78; color: white; }
+.reset { background: #fff0ef; color: #bd4038; }
+
+main {
+  display: grid;
+  grid-template-columns: 420px minmax(0, 1fr);
+  gap: 25px;
+  padding: 25px;
+}
+
+h2 { margin-top: 0; }
+
+.card {
+  background: white;
+  border-radius: 13px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px #1c315010;
+}
+
+.card h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #e3eaf3;
+  padding-bottom: 13px;
+  font-size: 16px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 14px 0 6px;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #ccd7e7;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #25364f;
+}
+
+textarea { min-height: 85px; resize: vertical; }
+
+.hint {
+  font-size: 11px;
+  color: #8391a8;
+  margin-top: 5px;
+}
+
+.preview-area {
+  background: #e4eaf3;
+  padding: 25px;
+  border-radius: 13px;
+  overflow: auto;
+}
+
+.preview-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.page {
+  background: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 25mm 25mm 22mm;
+  margin: 0 auto 25px;
+  color: #111;
+  font-family: "Times New Roman", serif;
+  font-size: 12pt;
+  line-height: 1.45;
+  box-shadow: 0 3px 15px #00000015;
+}
+
+.document-title {
+  text-align: center;
+  font-size: 14pt;
+  font-weight: bold;
+  margin-bottom: 32px;
+}
+
+.identity-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  margin-bottom: 18px;
+}
+
+.identity-table td {
+  vertical-align: top;
+  padding: 2px 3px;
+}
+
+.identity-table td:first-child { width: 31px; }
+.identity-table td:nth-child(2) { width: 180px; }
+.identity-table td:nth-child(3) { width: 12px; }
+
+.section {
+  display: grid;
+  grid-template-columns: 220px 12px 1fr;
+  margin-bottom: 16px;
+  align-items: start;
+}
+
+.section-label { font-weight: normal; }
+.section-content { white-space: pre-wrap; }
+
+.signature {
+  margin-top: 35px;
+  margin-left: 55%;
+  line-height: 1.5;
+}
+
+.signature-space { height: 75px; }
+
+.page-two-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 14pt;
+  margin-bottom: 30px;
+}
+
+.photo-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.photo-grid img {
+  max-width: 100%;
+  max-height: 190mm;
+  object-fit: contain;
+}
+
+.placeholder {
+  color: #999;
+  text-align: center;
+  margin-top: 70px;
+  font-style: italic;
+}
+
+.upload-box {
+  border: 2px dashed #cbd7e8;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  background: #f7f9fc;
+}
+
+#photoInput { border: none; }
+
+@media(max-width: 1000px) {
+  main { grid-template-columns: 1fr; }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body { background: white; }
+  header, .form-panel, .preview-heading { display: none !important; }
+
+  main {
+    display: block;
+    padding: 0;
+  }
+
+  .preview-area {
+    padding: 0;
+    background: white;
+    overflow: visible;
+  }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    margin: 0;
+    padding: 25mm 25mm 22mm;
+    box-shadow: none;
+    overflow: hidden;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .photo-grid img {
+    break-inside: avoid;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    LAPORAN HASIL CASE CONFERENCE
+    <small>Sentra Handayani Jakarta | Document Generator</small>
+  </div>
+
+  <div>
+    <button class="reset" onclick="resetForm()">Reset</button>
+    <button class="export" onclick="window.print()">↓ Ekspor PDF</button>
+  </div>
+</header>
+
+<main>
+
+<!-- FORMULIR -->
+<section class="form-panel">
+
+<h2>Formulir Laporan CC</h2>
+<p>Lengkapi informasi Case Conference untuk membuat laporan.</p>
+
+<div class="card">
+<h3>01. Identitas PM</h3>
+
+<label>Nama</label>
+<input id="name" placeholder="Nama lengkap PM">
+
+<label>Tempat, Tanggal Lahir</label>
+<input id="birth" placeholder="Contoh: Jakarta, 10 April 2006">
+
+<label>Alamat</label>
+<textarea id="address" placeholder="Alamat lengkap PM"></textarea>
+
+<label>Kasus</label>
+<input id="case" placeholder="Contoh: Anak Berhadapan dengan Hukum">
+
+<label>Status</label>
+<input id="status" placeholder="Contoh: Putusan">
+
+<label>Rujukan</label>
+<input id="referral" placeholder="Instansi yang merujuk">
+
+<label>Tanggal Masuk</label>
+<input id="entry" type="date">
+
+</div>
+
+<div class="card">
+<h3>02. Hasil Pembahasan</h3>
+
+<label>Pembahasan Hasil Asesmen</label>
+<textarea id="assessment" placeholder="Tuliskan hasil pembahasan asesmen PM"></textarea>
+
+<label>Rencana Intervensi</label>
+<textarea id="intervention" placeholder="Tuliskan rencana intervensi"></textarea>
+
+<label>Rekomendasi Hasil Kesepakatan</label>
+<textarea id="recommendation" placeholder="Tuliskan rekomendasi hasil kesepakatan"></textarea>
+
+</div>
+
+<div class="card">
+<h3>03. Petugas Pelaksana</h3>
+
+<label>Tempat Pembuatan Laporan</label>
+<input id="city" value="Jakarta">
+
+<label>Tanggal Pelaksanaan CC</label>
+<input id="meetingDate" type="date">
+
+<label>Nama Petugas Pelaksana</label>
+<input id="officer" placeholder="Nama lengkap petugas">
+
+<label>Gelar / Jabatan</label>
+<input id="title" placeholder="Contoh: M.Psi., Psikolog">
+
+</div>
+
+<div class="card">
+<h3>04. Dokumentasi</h3>
+<p class="hint">Upload foto atau screenshot kegiatan CC. Bisa lebih dari satu foto.</p>
+
+<div class="upload-box">
+<input type="file" id="photoInput" accept="image/*" multiple>
+<p class="hint">Format JPG, PNG, atau JPEG</p>
+</div>
+
+<p id="photoCount" class="hint">Belum ada foto yang diunggah.</p>
+</div>
+
+</section>
+
+<!-- PREVIEW -->
+<section>
+
+<div class="preview-heading">
+<div>
+<h2>Pratinjau Dokumen</h2>
+<p>Format A4 | 2 bagian dokumen</p>
+</div>
+</div>
+
+<div class="preview-area">
+
+<!-- HALAMAN 1 -->
+<div class="page">
+
+<div class="document-title">
+LAPORAN HASIL CASE CONFERENCE
+</div>
+
+<div style="margin-bottom:5px;">
+1. Pembahasan Kasus PM atas nama
+</div>
+
+<table class="identity-table">
+<tr><td>a.</td><td>Nama</td><td>:</td><td id="p-name">........................</td></tr>
+<tr><td>b.</td><td>Tempat, Tanggal Lahir</td><td>:</td><td id="p-birth">........................</td></tr>
+<tr><td>c.</td><td>Alamat</td><td>:</td><td id="p-address">........................</td></tr>
+<tr><td>d.</td><td>Kasus</td><td>:</td><td id="p-case">........................</td></tr>
+<tr><td>e.</td><td>Status</td><td>:</td><td id="p-status">........................</td></tr>
+<tr><td>f.</td><td>Rujukan</td><td>:</td><td id="p-referral">........................</td></tr>
+<tr><td>g.</td><td>Tanggal Masuk</td><td>:</td><td id="p-entry">........................</td></tr>
+</table>
+
+<div class="section">
+<div class="section-label">2. Pembahasan Hasil Asesmen</div>
+<div>:</div>
+<div class="section-content" id="p-assessment">........................</div>
+</div>
+
+<div class="section">
+<div class="section-label">3. Rencana Intervensi</div>
+<div>:</div>
+<div class="section-content" id="p-intervention">........................</div>
+</div>
+
+<div class="section">
+<div class="section-label">4. Rekomendasi Hasil Kesepakatan</div>
+<div>:</div>
+<div class="section-content" id="p-recommendation">........................</div>
+</div>
+
+<div class="signature">
+<div><span id="p-city">Jakarta</span>, <span id="p-meetingDate">........................</span></div>
+<div>Petugas Pelaksana,</div>
+<div class="signature-space"></div>
+<div><b id="p-officer">........................</b></div>
+<div id="p-title"></div>
+</div>
+
+</div>
+
+<!-- HALAMAN 2 -->
+<div class="page">
+
+<div class="page-two-title">DOKUMENTASI</div>
+
+<div class="photo-grid" id="photoPreview">
+<div class="placeholder">Dokumentasi akan muncul di sini setelah foto diunggah.</div>
+</div>
+
+</div>
+
+</div>
+</section>
+
+</main>
+
+<script>
+const fields = [
+"name", "birth", "address", "case", "status",
+"referral", "assessment", "intervention",
+"recommendation", "city", "officer", "title"
+];
+
+function formatDate(value) {
+  if (!value) return "........................";
+
+  const parts = value.split("-");
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1])-1,
+    Number(parts[2])
+  ).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+}
+
+function updatePreview() {
+  fields.forEach(id => {
+    const input = document.getElementById(id);
+    const output = document.getElementById("p-" + id);
+
+    output.textContent = input.value.trim() || "........................";
+  });
+
+  document.getElementById("p-entry").textContent =
+    formatDate(document.getElementById("entry").value);
+
+  document.getElementById("p-meetingDate").textContent =
+    formatDate(document.getElementById("meetingDate").value);
+}
+
+fields.concat(["entry", "meetingDate"]).forEach(id => {
+  document.getElementById(id).addEventListener("input", updatePreview);
+});
+
+let photoURLs = [];
+
+document.getElementById("photoInput").addEventListener("change", function() {
+  const files = Array.from(this.files);
+
+  photoURLs.forEach(url => URL.revokeObjectURL(url));
+  photoURLs = [];
+
+  const preview = document.getElementById("photoPreview");
+  preview.innerHTML = "";
+
+  files.forEach(file => {
+    if (!file.type.startsWith("image/")) return;
+
+    const url = URL.createObjectURL(file);
+    photoURLs.push(url);
+
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "Dokumentasi Case Conference";
+
+    preview.appendChild(img);
+  });
+
+  document.getElementById("photoCount").textContent =
+    files.length + " foto dipilih.";
+});
+
+function resetForm() {
+  if (!confirm("Yakin ingin menghapus seluruh isian?")) return;
+
+  document.querySelectorAll("input, textarea").forEach(input => {
+    if (input.id !== "city") input.value = "";
+  });
+
+  document.getElementById("city").value = "Jakarta";
+
+  photoURLs.forEach(url => URL.revokeObjectURL(url));
+  photoURLs = [];
+
+  document.getElementById("photoPreview").innerHTML =
+    '<div class="placeholder">Dokumentasi akan muncul di sini setelah foto diunggah.</div>';
+
+  document.getElementById("photoCount").textContent =
+    "Belum ada foto yang diunggah.";
+
+  updatePreview();
+}
+
+updatePreview();
+</script>
+
+</body>
+</html>
