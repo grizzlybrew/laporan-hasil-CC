@@ -1092,21 +1092,12 @@ document.getElementById("photoInput")
    7. EKSPOR PDF LANGSUNG KE LAPTOP
 ================================== */
 
-function waitForImage(img) {
-  return new Promise((resolve, reject) => {
-    if (img.complete && img.naturalWidth > 0) {
-      resolve();
-      return;
-    }
-    img.onload = () => resolve();
-    img.onerror = () => reject(new Error("Gambar gagal dimuat: " + img.src));
-  });
-}
-
 async function exportPDF() {
   const button = document.querySelector(".export");
   const originalText = button.textContent;
-  let exportRoot = null;
+  const previewArea = document.querySelector(".preview-area");
+  const originalStyle = previewArea.getAttribute("style");
+  let temporaryStyle = null;
 
   button.disabled = true;
   button.textContent = "Membuat PDF...";
@@ -1118,83 +1109,107 @@ async function exportPDF() {
 
     clearTimeout(saveTimer);
     updatePreview();
+    if (db) await saveToDatabase(collectFormData());
 
-    if (db) {
-      await saveToDatabase(collectFormData());
+    // Render area pratinjau yang asli. Tidak membuat cloneNode atau
+    // memindahkan konten ke elemen tersembunyi yang berisiko menjadi blank.
+    const report = previewArea.querySelector(":scope > .page");
+    if (!report || !report.querySelector(".document-title")) {
+      throw new Error("Isi laporan tidak ditemukan. Muat ulang halaman lalu coba lagi.");
     }
 
-    // Buat salinan khusus ekspor dengan lebar tepat 210 mm.
-    // Ini mencegah area preview dashboard membuat sisi dokumen terpotong.
-    exportRoot = document.createElement("div");
-    exportRoot.id = "pdf-export-root";
-    exportRoot.style.cssText = [
-      "position:fixed",
-      "left:0",
-      "top:0",
-      "width:210mm",
-      "background:#ffffff",
-      "z-index:99999",
-      "color:#111",
-      "font-family:Calibri,Arial,sans-serif",
-      "pointer-events:none",
-      "visibility:visible",
-      "opacity:1",
-      "display:block"
-    ].join(";");
+    const visibleText = report.innerText.trim();
+    if (!visibleText) {
+      throw new Error("Pratinjau laporan masih kosong. Isi formulir terlebih dahulu.");
+    }
 
-    const exportStyle = document.createElement("style");
-    exportStyle.textContent = `
-      #pdf-export-root, #pdf-export-root * { box-sizing: border-box !important; }
-      #pdf-export-root .page {
-        width:210mm !important; max-width:210mm !important;
-        margin:0 !important; padding:18mm 25mm 20mm !important;
-        background:#fff !important; color:#111 !important;
-        box-shadow:none !important; overflow:visible !important;
-        font-family:Calibri,Arial,sans-serif !important; font-size:11pt !important;
-        line-height:1.4 !important;
+    // Paksa area pratinjau menjadi bidang A4 yang dapat dibaca html2canvas.
+    previewArea.style.width = "794px";
+    previewArea.style.maxWidth = "none";
+    previewArea.style.margin = "0";
+    previewArea.style.padding = "0";
+    previewArea.style.overflow = "visible";
+    previewArea.style.background = "#ffffff";
+    previewArea.style.position = "absolute";
+    previewArea.style.left = "0";
+    previewArea.style.top = "0";
+    previewArea.style.zIndex = "999999";
+
+    temporaryStyle = document.createElement("style");
+    temporaryStyle.textContent = `
+      .preview-area > .page,
+      .preview-area #photoPages .page {
+        width: 210mm !important;
+        max-width: 210mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        color: #111 !important;
+        box-sizing: border-box !important;
       }
-      #pdf-export-root > .page { min-height:0 !important; height:auto !important; }
-      #pdf-export-root .logo-area { height:30mm !important; }
-      #pdf-export-root .logo-area img { width:25mm !important; height:25mm !important; object-fit:contain !important; }
-      #pdf-export-root .document-title, #pdf-export-root .page-two-title { font-weight:bold !important; }
-      #pdf-export-root .document-row { break-inside:auto; page-break-inside:auto; }
-      #pdf-export-root .signature, #pdf-export-root .photo-item { break-inside:avoid; page-break-inside:avoid; }
-      #pdf-export-root .document-row .value { white-space:pre-wrap; overflow-wrap:anywhere; text-align:justify; }
-      #pdf-export-root #photoPages { break-before:page; page-break-before:always; }
-      #pdf-export-root #photoPages .page { height:297mm !important; min-height:297mm !important; }
-      #pdf-export-root #photoPages .photo-grid { display:grid !important; grid-template-columns:1fr !important; grid-template-rows:1fr 1fr !important; gap:8mm !important; }
-      #pdf-export-root #photoPages .photo-item { height:82mm !important; display:flex !important; align-items:center !important; justify-content:center !important; }
-      #pdf-export-root #photoPages .photo-item img { max-width:100% !important; max-height:82mm !important; object-fit:contain !important; }
+      .preview-area > .page {
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 18mm 25mm 20mm !important;
+        overflow: visible !important;
+      }
+      .preview-area #photoPages {
+        display: block !important;
+        width: 210mm !important;
+        break-before: page !important;
+        page-break-before: always !important;
+      }
+      .preview-area #photoPages .page {
+        height: 297mm !important;
+        min-height: 297mm !important;
+        padding: 18mm 25mm 20mm !important;
+        overflow: hidden !important;
+        break-after: page !important;
+        page-break-after: always !important;
+      }
+      .preview-area #photoPages .page:last-child {
+        break-after: auto !important;
+        page-break-after: auto !important;
+      }
+      .preview-area #photoPages .photo-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: 1fr 1fr !important;
+        gap: 8mm !important;
+      }
+      .preview-area #photoPages .photo-item {
+        height: 82mm !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        break-inside: avoid !important;
+      }
+      .preview-area #photoPages img {
+        max-width: 100% !important;
+        max-height: 82mm !important;
+        object-fit: contain !important;
+      }
+      .preview-area .document-row .value {
+        white-space: pre-wrap !important;
+        overflow-wrap: anywhere !important;
+      }
+      .preview-area .signature { break-inside: avoid !important; }
     `;
-    exportRoot.appendChild(exportStyle);
+    document.head.appendChild(temporaryStyle);
 
-    const reportPage = document.querySelector(".preview-area > .page").cloneNode(true);
-    const photoPages = document.getElementById("photoPages").cloneNode(true);
-    exportRoot.appendChild(reportPage);
-    exportRoot.appendChild(photoPages);
-    document.body.appendChild(exportRoot);
+    // Tunggu gambar yang sudah tersedia selesai didekode. Gambar logo eksternal
+    // yang gagal dimuat tidak akan menggagalkan seluruh proses PDF.
+    const images = Array.from(previewArea.querySelectorAll("img"));
+    await Promise.all(images.map(img => {
+      if (typeof img.decode === "function") return img.decode().catch(() => {});
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }));
 
-    // Pastikan salinan ekspor benar-benar memiliki ukuran sebelum dirender.
-    exportRoot.style.visibility = "visible";
-    exportRoot.style.opacity = "1";
-    const exportRect = exportRoot.getBoundingClientRect();
-    if (exportRect.width < 100 || exportRoot.scrollHeight < 100) {
-      throw new Error("Konten laporan tidak terbaca untuk proses ekspor PDF.");
-    }
-
-    // Tunggu semua gambar pada salinan ekspor siap.
-    const images = Array.from(exportRoot.querySelectorAll("img"));
-    await Promise.all(images.map(waitForImage));
-    await Promise.all(images.map(img =>
-      typeof img.decode === "function" ? img.decode().catch(() => {}) : Promise.resolve()
-    ));
-
-    // Beri browser waktu menghitung ulang tata letak salinan.
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-    if (!exportRoot.querySelector(".document-title")) {
-      throw new Error("Judul laporan tidak ditemukan pada salinan ekspor.");
-    }
 
     const options = {
       margin: 0,
@@ -1205,24 +1220,24 @@ async function exportPDF() {
         useCORS: true,
         allowTaint: false,
         backgroundColor: "#ffffff",
-        logging: false,
+        logging: true,
         scrollX: 0,
         scrollY: 0,
-        windowWidth: Math.max(794, document.documentElement.clientWidth),
-        windowHeight: Math.max(document.documentElement.scrollHeight, 1123)
+        windowWidth: 1200
       },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait", compress: true },
       pagebreak: { mode: ["css", "legacy"], avoid: [".signature", ".photo-item"] }
     };
 
-    // .save() mengunduh PDF langsung, tanpa membuka jendela Print.
-    await html2pdf().set(options).from(exportRoot).save();
+    await html2pdf().set(options).from(previewArea).save();
 
   } catch (error) {
-    console.error(error);
-    alert("PDF belum berhasil dibuat. Pastikan koneksi internet aktif dan semua gambar/logo sudah tampil, lalu coba lagi.");
+    console.error("Gagal mengekspor PDF:", error);
+    alert("PDF gagal dibuat: " + (error && error.message ? error.message : "Kesalahan tidak diketahui"));
   } finally {
-    if (exportRoot && exportRoot.parentNode) exportRoot.remove();
+    if (temporaryStyle) temporaryStyle.remove();
+    if (originalStyle === null) previewArea.removeAttribute("style");
+    else previewArea.setAttribute("style", originalStyle);
     button.disabled = false;
     button.textContent = originalText;
   }
